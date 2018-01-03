@@ -1,0 +1,43 @@
+plugins {
+    id 'org.springframework.boot' version '1.5.8.RELEASE'
+}
+
+// constants declaration
+ext {
+    jdkVersion = 1.8
+
+    junitVersion = "4.12"
+    log4jVersion = "2.7"
+    jetbrainsAnnotationVersion = "15.0"
+}
+
+allprojects {
+    group = "russiancold"
+    version = "1.0-SNAPSHOT"
+
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+    }
+
+    sourceCompatibility = jdkVersion
+    targetCompatibility = jdkVersion
+}
+
+// common libraries declaration
+ext.libraries = [
+        spring_boot : [
+                "org.springframework.boot:spring-boot-starter-web:1.5.8.RELEASE",
+                "org.springframework.boot:spring-boot-starter-actuator:1.5.8.RELEASE",
+        ],
+
+        spring_boot_websocket: "org.springframework.boot:spring-boot-starter-websocket:1.5.8.RELEASE",
+
+        junit: "junit:junit:$junitVersion",
+        log4j: [
+                "org.apache.logging.log4j:log4j-api:$log4jVersion",
+                "org.apache.logging.log4j:log4j-core:$log4jVersion"
+        ],
+        jetbrainsAnnotations: "org.jetbrains:annotations:$jetbrainsAnnotationVersion"
+]
