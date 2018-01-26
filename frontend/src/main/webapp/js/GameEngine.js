@@ -186,15 +186,15 @@ GameEngine = Class.extend({
     // },
 
      gameOver: function(msg) {
-     //location.reload();
-     if (msg.data == "\"YOU LOSE\"") {
-        createjs.Sound.stop("game");
-        this.menu.showWithText("GAME OVER :(", "#ff4444");
-     }
-     else {
-        createjs.Sound.stop("game");
-        this.menu.showWithText("YOU WON! :)", "#00FF00");
-     }
+         //location.reload();
+         gInputEngine.subscribers = [];
+         if (msg.data == "\"YOU LOSE\"") {
+            createjs.Sound.stop("game");
+            this.menu.showWithText("GAME OVER :(", "#ff4444");
+         } else {
+            createjs.Sound.stop("game");
+            this.menu.showWithText("YOU WON! :)", "#00FF00");
+         }
      },
 
 
