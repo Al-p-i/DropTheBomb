@@ -1,7 +1,10 @@
 package mm.mm;
 
+import mm.model.GameSession;
+
 /**
  * Created by a.pomosov on 26/01/2018.
  */
-public class MapGenerator {
+public interface MapGenerator {
+    void generateMap(GameSession gameSession);
 }

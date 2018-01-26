@@ -1,15 +1,15 @@
 package mm.ticker;
 
 import mm.message.Topic;
-import mm.model.Girl;
+import mm.model.Player;
 import mm.model.Movable;
 
 public class Action {
     private Topic action;
-    private Girl actor;
+    private Player actor;
     private String data;
 
-    public Action(Topic action, Girl actor, String data) {
+    public Action(Topic action, Player actor, String data) {
         this.action = action;
         this.actor = actor;
         this.data = data;
@@ -19,7 +19,7 @@ public class Action {
         return action;
     }
 
-    public Girl getActor() {
+    public Player getActor() {
         return actor;
     }
 

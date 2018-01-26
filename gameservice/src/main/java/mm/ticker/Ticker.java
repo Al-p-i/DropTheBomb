@@ -3,17 +3,9 @@ package mm.ticker;
 import mm.geometry.Bar;
 import mm.geometry.Point;
 import mm.message.Topic;
-import mm.model.GameObject;
-import mm.model.GameSession;
-import mm.model.Girl;
-import mm.model.Bomb;
-import mm.model.Wall;
-import mm.model.Fire;
-import mm.model.Bonus;
-import mm.model.Brick;
-import mm.model.Movable;
+import mm.model.*;
+import mm.model.Player;
 
-import mm.model.Tickable;
 import mm.network.Broker;
 import mm.storage.SessionStorage;
 import org.slf4j.LoggerFactory;
@@ -41,9 +33,9 @@ public class Ticker extends Thread {
 
     private boolean isRunning;
     private GameSession gameSession;
-    private ArrayList<Girl> movedGirls = new ArrayList<>(4);
+    private ArrayList<Player> movedPlayers = new ArrayList<>(4);
     private ArrayList<GameObject> changedObjects = new ArrayList<>();
-    private ArrayList<Girl> deadGirls = new ArrayList<>();
+    private ArrayList<Player> deadPlayers = new ArrayList<>();
 
     public Ticker(GameSession session) {
         this.gameSession = session;
@@ -55,11 +47,11 @@ public class Ticker extends Thread {
             if (isRunning) {
                 long started = System.currentTimeMillis();
                 changedObjects.clear();
-                deadGirls.clear();
+                deadPlayers.clear();
                 handleQueue();
                 act(FRAME_TIME);
                 checkCollisions();
-                detonationBomb();
+                //detonationBomb();
                 sendReplica();
                 long elapsed = System.currentTimeMillis() - started;
                 if (elapsed < FRAME_TIME) {
@@ -87,26 +79,25 @@ public class Ticker extends Thread {
         ArrayList<WebSocketSession> sessions = storage.getWebsocketsByGameSession(gameSession);
         ArrayList<WebSocketSession> closed = new ArrayList<>();
         for (WebSocketSession session : sessions) {
-            for (Girl girl : deadGirls) {
-                if (storage.getGirlBySocket(session) == girl) {
-                        closed.add(session);
-                        System.out.println("SESSION " + storage.getWebsocketByGirl(girl));
-                        Broker.getInstance().send(session, GAME_OVER, "YOU LOSE");
+            for (Player player : deadPlayers) {
+                if (storage.getGirlBySocket(session) == player) {
+                    closed.add(session);
+                    System.out.println("SESSION " + storage.getWebsocketByGirl(player));
+                    Broker.getInstance().send(session, GAME_OVER, "YOU LOSE");
                 }
             }
         }
-        for (WebSocketSession session: closed) {
+        for (WebSocketSession session : closed) {
             try {
                 session.close();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
     private void handleQueue() {
-        movedGirls.clear();
+        movedPlayers.clear();
         for (Action action : inputQueue) {
             if (action.getAction().equals(Topic.PLANT_BOMB)
                     && action.getActor().getBombCapacity() != 0) {
@@ -117,9 +108,9 @@ public class Ticker extends Thread {
                 changedObjects.add(bomb);
             }
             if (action.getAction().equals(Topic.MOVE)
-                    && !movedGirls.contains(action.getActor())) {
+                    && !movedPlayers.contains(action.getActor())) {
                 action.getActor().setDirection(action.getData());
-                movedGirls.add(action.getActor());
+                movedPlayers.add(action.getActor());
             }
         }
         inputQueue.clear();
@@ -133,32 +124,67 @@ public class Ticker extends Thread {
     }
 
     public void checkCollisions() {
-        for (Girl girl : gameSession.getGirls()) {
-            Bar barGirl = girl.getGirlBar();
-            for (Wall wall : gameSession.getWalls()) {
-                Bar barWall = wall.getBar();
-                if (!barGirl.isColliding(barWall))
-                    girl.moveBack(FRAME_TIME);
+        for (Player player : gameSession.getPlayers()) {
+            Bar playerBar = player.getPlayerBar();
+            checkWallCollisions(player, playerBar);
+            checkBrickCollisions(player, playerBar);
+            checkBonusCollisions(player, playerBar);
+            checkBombCollisions(player, playerBar);
+            tryBombTransmit(player, playerBar);
+            changedObjects.add(player);
+        }
+    }
+
+    private void tryBombTransmit(Player player, Bar playerBar) {
+        if (player.getBomb() == null) {
+            return;
+        }
+        for (Player other : gameSession.getPlayers()) {
+            if (other.equals(player)) {
+                continue;
             }
-            for (Brick brick : gameSession.getBricks()) {
-                Bar barBrick = brick.getBar();
-                if (!barGirl.isColliding(barBrick))
-                    girl.moveBack(FRAME_TIME);
+            if (other.getBomb() == null && !other.isBombImmune()) {
+                continue;
             }
-            for (Bonus bonus : gameSession.getBonuses()) {
-                Bar barBonus = bonus.getBar();
-                if (!barGirl.isColliding(barBonus)) {
-                    girl.takeBonus(bonus);
-                    changedObjects.add(bonus);
-                    gameSession.removeGameObject(bonus);
-                }
+            Bar otherBar = other.getPlayerBar();
+            if (!playerBar.isColliding(otherBar)) {
+                player.setBomb(player.getBomb());
             }
-            for (Bomb bomb : gameSession.getBombs()) {
-                Bar barBomb = bomb.getBar();
-                if (!barGirl.isColliding(barBomb) && !bomb.getOwner().equals(girl))
-                    girl.moveBack(FRAME_TIME);
+        }
+    }
+
+    private void checkBombCollisions(Player player, Bar playerBar) {
+        for (Bomb bomb : gameSession.getBombs()) {
+            Bar barBomb = bomb.getBar();
+            if (!playerBar.isColliding(barBomb) && !bomb.getOwner().equals(player))
+                player.moveBack(FRAME_TIME);
+        }
+    }
+
+    private void checkBonusCollisions(Player player, Bar playerBar) {
+        for (Bonus bonus : gameSession.getBonuses()) {
+            Bar barBonus = bonus.getBar();
+            if (!playerBar.isColliding(barBonus)) {
+                player.takeBonus(bonus);
+                changedObjects.add(bonus);
+                gameSession.removeGameObject(bonus);
             }
-            changedObjects.add(girl);
+        }
+    }
+
+    private void checkBrickCollisions(Player player, Bar playerBar) {
+        for (Brick brick : gameSession.getBricks()) {
+            Bar barBrick = brick.getBar();
+            if (!playerBar.isColliding(barBrick))
+                player.moveBack(FRAME_TIME);
+        }
+    }
+
+    private void checkWallCollisions(Player player, Bar playerBar) {
+        for (Wall wall : gameSession.getWalls()) {
+            Bar barWall = wall.getBar();
+            if (!playerBar.isColliding(barWall))
+                player.moveBack(FRAME_TIME);
         }
     }
 
@@ -209,10 +235,10 @@ public class Ticker extends Thread {
 
                 for (int i = 0; i < explosions.size(); i++) {
                     for (int j = 0; j < explosions.get(i).size(); j++) {
-                        for (Girl girl : gameSession.getGirls()) {
-                            if (!girl.getGirlBar().isColliding(explosions.get(i).get(j))) {
-                                deadGirls.add(girl);
-                                changedObjects.remove(girl);
+                        for (Player player : gameSession.getPlayers()) {
+                            if (!player.getPlayerBar().isColliding(explosions.get(i).get(j))) {
+                                deadPlayers.add(player);
+                                changedObjects.remove(player);
                             }
                         }
                         if (gameSession.getGameObjectByPosition(explosions

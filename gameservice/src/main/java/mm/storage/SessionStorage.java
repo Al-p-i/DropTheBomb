@@ -2,7 +2,7 @@ package mm.storage;
 
 import mm.model.GameObject;
 import mm.model.GameSession;
-import mm.model.Girl;
+import mm.model.Player;
 import mm.network.Broker;
 import mm.ticker.Action;
 import mm.ticker.Ticker;
@@ -23,7 +23,7 @@ public class SessionStorage {
     private static ConcurrentHashMap<GameSession, ArrayList<WebSocketSession>> storage
             = new ConcurrentHashMap<>();
     private static ConcurrentHashMap<Long, GameSession> sessions = new ConcurrentHashMap<>();
-    private static ConcurrentHashMap<Girl, WebSocketSession> girlToWebsocket
+    private static ConcurrentHashMap<Player, WebSocketSession> girlToWebsocket
             = new ConcurrentHashMap<>();
     private static ConcurrentHashMap<GameSession, Ticker> tickers = new ConcurrentHashMap<>();
     private static volatile long lastId = -1;
@@ -67,8 +67,8 @@ public class SessionStorage {
         return first.get();
     }
 
-    public static Girl getGirlBySocket(WebSocketSession session) {
-        for (Map.Entry<Girl, WebSocketSession> i : girlToWebsocket.entrySet()) {
+    public static Player getGirlBySocket(WebSocketSession session) {
+        for (Map.Entry<Player, WebSocketSession> i : girlToWebsocket.entrySet()) {
             if (i.getValue().equals(session)) {
                 return i.getKey();
             }
@@ -76,12 +76,12 @@ public class SessionStorage {
         return null;
     }
 
-    public static WebSocketSession getWebsocketByGirl(Girl girl) {
-        return girlToWebsocket.get(girl);
+    public static WebSocketSession getWebsocketByGirl(Player player) {
+        return girlToWebsocket.get(player);
     }
 
     public static void putGirlToSocket(WebSocketSession session, GameObject object) {
-        girlToWebsocket.put((Girl) object, session);
+        girlToWebsocket.put((Player) object, session);
     }
 
     public static void putTicker(Ticker ticker, GameSession session) {

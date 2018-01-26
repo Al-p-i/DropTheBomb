@@ -3,6 +3,8 @@ package mm.model;
 import mm.geometry.Point;
 import mm.message.Message;
 import mm.message.Topic;
+import mm.mm.EmptyMapGenerator;
+import mm.mm.MapGenerator;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -16,11 +18,12 @@ public class GameSession implements Tickable {
     private List<GameObject> gameObjects = new ArrayList<>();
     //ID for game objects
     private int lastId = -1;
+    private MapGenerator mapGenerator = new EmptyMapGenerator();
 
     public GameSession(int playerCount, long id) {
         this.playerCount = playerCount;
         this.id = id;
-        Util.generateMap(this);
+        mapGenerator.generateMap(this); //Unsafe construction
     }
 
     public int getPlayerCount() {
@@ -56,7 +59,7 @@ public class GameSession implements Tickable {
             default:
                 position = new Point(1, 1);
         }
-        addGameObject(new Girl(this, position));
+        addGameObject(new Player(this, position));
         connectedPlayers++;
     }
 
@@ -93,13 +96,13 @@ public class GameSession implements Tickable {
         return lastId;
     }
 
-    public ArrayList<Girl> getGirls() {
-        ArrayList<Girl> girls = new ArrayList<>();
+    public ArrayList<Player> getPlayers() {
+        ArrayList<Player> players = new ArrayList<>();
         for (GameObject object : gameObjects) {
-            if (object instanceof Girl)
-                girls.add((Girl) object);
+            if (object instanceof Player)
+                players.add((Player) object);
         }
-        return girls;
+        return players;
     }
 
 

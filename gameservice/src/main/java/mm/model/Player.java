@@ -3,16 +3,18 @@ package mm.model;
 import mm.geometry.Point;
 import org.slf4j.LoggerFactory;
 
-public class Girl extends GameObject implements Movable, Tickable {
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(Girl.class);
+public class Player extends GameObject implements Movable, Tickable {
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Player.class);
     private static final int GIRL_WIDTH = 26;
     private static final int GIRL_HEIGHT = 26;
     private Direction direction = Direction.IDLE;
-    private transient double speed = 0.1;
+    private transient double speed = 0.5;
     private transient int bombCapacity = 1;
     private transient int bombRange = 1;
+    private Bomb bomb;
+    private int immunityTimer = 0;
 
-    public Girl(GameSession session, Point position) {
+    public Player(GameSession session, Point position) {
         super(session, new Point(position.getX() * GameObject.getWidthBox(),
                         position.getY() * GameObject.getWidthBox()),
                 "Pawn", GIRL_WIDTH, GIRL_HEIGHT);
@@ -26,7 +28,7 @@ public class Girl extends GameObject implements Movable, Tickable {
 
     @Override
     public Point move(int time) {
-        int delta = (int)(speed * (double)time);
+        int delta = (int) (speed * (double) time);
         switch (direction) {
             case UP:
                 moveLog(direction, position.getX(), position.getY(),
@@ -55,7 +57,7 @@ public class Girl extends GameObject implements Movable, Tickable {
     }
 
     public Point moveBack(int time) {
-        int delta = (int)(speed * (double)time);
+        int delta = (int) (speed * (double) time);
         switch (direction) {
             case DOWN:
                 moveLog(direction, position.getX(), position.getY(),
@@ -90,8 +92,8 @@ public class Girl extends GameObject implements Movable, Tickable {
     }
 
     public void moveLog(Direction direction, int oldX, int oldY, int x, int y) {
-        //logger.info("Girl id = {} moved {} ({}, {}) to ({}, {})",
-          //      getId(), direction.name(), oldX, oldY, x, y);
+        //logger.info("Player id = {} moved {} ({}, {}) to ({}, {})",
+        //      getId(), direction.name(), oldX, oldY, x, y);
     }
 
     public void takeBonus(Bonus bonus) {
@@ -104,9 +106,27 @@ public class Girl extends GameObject implements Movable, Tickable {
         else this.bombRange++;
     }
 
+    public void setBomb(Bomb bomb) {
+        log.info("Bomb transmitted");
+        this.bomb = bomb;
+    }
+
+    public Bomb getBomb() {
+        return bomb;
+    }
+
     @Override
     public void tick(int elapsed) {
         move(elapsed);
+        tickImmunityTimer(elapsed);
+    }
+
+    private void tickImmunityTimer(int elapsed) {
+        if(elapsed > immunityTimer){
+            immunityTimer = 0;
+        } else {
+            immunityTimer -= elapsed;
+        }
     }
 
     public Direction getDirection() {
@@ -139,5 +159,13 @@ public class Girl extends GameObject implements Movable, Tickable {
 
     public static int getGirlHeight() {
         return GIRL_HEIGHT;
+    }
+
+    public boolean isBombImmune() {
+        return immunityTimer > 0;
+    }
+
+    public void setBombImmune(int bombImmune) {
+        immunityTimer = bombImmune;
     }
 }
