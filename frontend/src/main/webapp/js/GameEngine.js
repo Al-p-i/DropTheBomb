@@ -67,7 +67,7 @@ GameEngine = Class.extend({
             {id: "tile_grass", src: "img/theSand1.png"},
             {id: "tile_grass2", src: "img/theSand2.png"},
             {id: "tile_wall", src: "img/tile_wall.png"},
-            {id: "tile_wood", src: "img/tile_wood.png"},
+            {id: "tile_wood", src: "img/crateWood.png"},
             {id: "bomb", src: "img/bomb.png"},
             {id: "fire", src: "img/fire.png"},
             {id: "bonus_speed", src: "img/bonus_speed.png"},
