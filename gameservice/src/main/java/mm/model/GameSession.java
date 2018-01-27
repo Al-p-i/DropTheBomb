@@ -1,6 +1,7 @@
 package mm.model;
 
 import mm.geometry.Point;
+import mm.map.FromFileMapGenerator;
 import mm.mechanics.BombGenerator;
 import mm.mechanics.RandomSingleBombGenerator;
 import mm.message.Message;
@@ -20,7 +21,7 @@ public class GameSession implements Tickable {
     private List<GameObject> gameObjects = new ArrayList<>();
     //ID for game objects
     private int lastId = -1;
-    private MapGenerator mapGenerator = new EmptyMapGenerator();
+    private MapGenerator mapGenerator = new FromFileMapGenerator();
 
     public GameSession(int playerCount, long id) {
         this.playerCount = playerCount;
