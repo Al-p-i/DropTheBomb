@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 
 public class Player extends GameObject implements Movable, Tickable {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(Player.class);
-    private static final int GIRL_WIDTH = 26;
-    private static final int GIRL_HEIGHT = 26;
+    private static final int PLAYER_WIDTH = 26;
+    private static final int PLAYER_HEIGHT = 26;
     private Direction direction = Direction.IDLE;
     private transient double speed = 0.5;
     private transient int bombCapacity = 1;
@@ -18,7 +18,7 @@ public class Player extends GameObject implements Movable, Tickable {
     public Player(GameSession session, Point position) {
         super(session, new Point(position.getX() * GameObject.getWidthBox(),
                         position.getY() * GameObject.getWidthBox()),
-                "Pawn", GIRL_WIDTH, GIRL_HEIGHT);
+                "Pawn", PLAYER_WIDTH, PLAYER_HEIGHT);
     }
 
     public void plantBomb() {
@@ -160,12 +160,12 @@ public class Player extends GameObject implements Movable, Tickable {
         return bombRange;
     }
 
-    public static int getGirlWidth() {
-        return GIRL_WIDTH;
+    public static int getPlayerWidth() {
+        return PLAYER_WIDTH;
     }
 
-    public static int getGirlHeight() {
-        return GIRL_HEIGHT;
+    public static int getPlayerHeight() {
+        return PLAYER_HEIGHT;
     }
 
     public boolean isBombImmune() {

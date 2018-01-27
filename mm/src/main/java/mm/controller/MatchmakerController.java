@@ -1,5 +1,7 @@
 package mm.controller;
 
+import mm.connection.ConnectionQueue;
+import mm.connection.Joins;
 import mm.service.MatchmakerService;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Controller
 @CrossOrigin(origins = "*")
@@ -43,5 +51,14 @@ public class MatchmakerController {
         logger.info("Asked for private link");
         String link = matchmakerService.getLink(playerCount);
         return new ResponseEntity<>(link, HttpStatus.OK);
+    }
+
+    @RequestMapping(
+            path = "games",
+            method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<String> games() {
+        List<Map.Entry<String, Long>> games = Joins.getInstance().entrySet().stream().sorted(((a, b) -> (int) (a.getValue() - b.getValue()))).collect(Collectors.toList());
+        return new ResponseEntity<>(games.toString(), HttpStatus.OK);
     }
 }

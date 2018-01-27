@@ -36,7 +36,7 @@ public abstract class GameObject {
 
     public Bar getPlayerBar() {
         return new Bar(position.getX() + 3, position.getY() + 3,
-                position.getX() + Player.getGirlWidth(), position.getY() + Player.getGirlHeight());
+                position.getX() + Player.getPlayerWidth(), position.getY() + Player.getPlayerHeight());
     }
 
     public Bar getBar() {

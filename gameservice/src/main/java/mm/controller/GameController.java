@@ -21,9 +21,6 @@ public class GameController {
     @Autowired
     GameService gameService;
 
-    @Autowired
-    SessionStorage sessionStorage;
-
     @RequestMapping(
             path = "create",
             method = RequestMethod.POST,
@@ -42,8 +39,8 @@ public class GameController {
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Long> start(@RequestParam("gameId") long gameId) {
-        Ticker ticker = new Ticker(sessionStorage.getSessionById(gameId));
-        sessionStorage.putTicker(ticker, sessionStorage.getSessionById(gameId));
+        Ticker ticker = new Ticker(SessionStorage.getSessionById(gameId));
+        SessionStorage.putTicker(ticker, SessionStorage.getSessionById(gameId));
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -40,7 +40,7 @@ public class Bomb extends GameObject implements Tickable {
         this.lifetime = lifetime;
     }
 
-    public void resetLifeTime(){
-        this.lifetime = DEFAULT_LIFETIME;
+    public void reset(){
+        this.elapsed = 0;
     }
 }

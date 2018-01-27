@@ -10,7 +10,6 @@ import mm.ticker.Action;
 import mm.ticker.Ticker;
 import mm.util.JsonHelper;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.socket.CloseStatus;
@@ -25,9 +24,6 @@ public class EventHandler extends TextWebSocketHandler implements WebSocketHandl
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(EventHandler.class);
 
-    @Autowired
-    SessionStorage storage;
-
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         super.afterConnectionEstablished(session);
@@ -37,21 +33,21 @@ public class EventHandler extends TextWebSocketHandler implements WebSocketHandl
         String name = parameters.get("name").toString();
         name = name.substring(1, name.length() - 1);
         long gameId = Long.parseLong(idParam.substring(1, idParam.length() - 1));
-        GameSession gameSession = storage.getSessionById(gameId);
+        GameSession gameSession = SessionStorage.getSessionById(gameId);
 
         if (!gameSession.isReady()) {
-            storage.addByGameId(gameId, session);
+            SessionStorage.addByGameId(gameId, session);
             ConnectionPool.getInstance().add(session, name);
-            int data = storage.getId(gameId);
+            int data = SessionStorage.getId(gameId);
             Broker.getInstance().send(session, Topic.POSSESS, data);
             gameSession.addPlayer(data);
-            storage.putGirlToSocket(session, gameSession.getById(gameSession.getLastId()));
+            SessionStorage.putGirlToSocket(session, gameSession.getById(gameSession.getLastId()));
             Broker.getInstance().send(session, Topic.REPLICA,
-                    storage.getSessionById(gameId).getGameObjects());
+                    SessionStorage.getSessionById(gameId).getGameObjects());
             if (gameSession.getPlayerCount()
-                    == storage.getWebsocketsByGameSession(gameSession).size()) {
+                    == SessionStorage.getWebsocketsByGameSession(gameSession).size()) {
                 Ticker ticker = new Ticker(gameSession);
-                storage.putTicker(ticker, gameSession);
+                SessionStorage.putTicker(ticker, gameSession);
                 ticker.setName("gameId : " + gameId);
                 ticker.begin();
                 ticker.start();
@@ -63,11 +59,11 @@ public class EventHandler extends TextWebSocketHandler implements WebSocketHandl
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        if (storage.getByWebsocket(session).isReady()) {
+        if (SessionStorage.getByWebsocket(session).isReady()) {
             Message msg = JsonHelper.fromJson(message.getPayload(), Message.class);
             Action action = new Action(msg.getTopic(),
-                    storage.getGirlBySocket(session), msg.getData());
-            storage.putAction(storage.getByWebsocket(session), action);
+                    SessionStorage.getPlayerBySocket(session), msg.getData());
+            SessionStorage.putAction(SessionStorage.getByWebsocket(session), action);
         }
     }
 
@@ -75,7 +71,7 @@ public class EventHandler extends TextWebSocketHandler implements WebSocketHandl
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
         log.info("Socket Closed: [" +
                 closeStatus.getCode() + "] " + closeStatus.getReason());
-        storage.removeWebsocket(session);
+        SessionStorage.removeWebsocket(session);
         super.afterConnectionClosed(session, closeStatus);
     }
 

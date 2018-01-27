@@ -7,7 +7,6 @@ import mm.network.Broker;
 import mm.ticker.Action;
 import mm.ticker.Ticker;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.ArrayList;
@@ -17,7 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static mm.message.Topic.GAME_OVER;
 
-@Component
 public class SessionStorage {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(SessionStorage.class);
     private static ConcurrentHashMap<GameSession, ArrayList<WebSocketSession>> storage
@@ -67,7 +65,7 @@ public class SessionStorage {
         return first.get();
     }
 
-    public static Player getGirlBySocket(WebSocketSession session) {
+    public static Player getPlayerBySocket(WebSocketSession session) {
         for (Map.Entry<Player, WebSocketSession> i : girlToWebsocket.entrySet()) {
             if (i.getValue().equals(session)) {
                 return i.getKey();
@@ -76,7 +74,7 @@ public class SessionStorage {
         return null;
     }
 
-    public static WebSocketSession getWebsocketByGirl(Player player) {
+    public static WebSocketSession getWebsocketByPlayer(Player player) {
         return girlToWebsocket.get(player);
     }
 
@@ -97,7 +95,7 @@ public class SessionStorage {
             ArrayList<WebSocketSession> tmp = (ArrayList<WebSocketSession>) e.getValue();
             if (tmp.contains(session)) {
                 GameSession gameSession = (GameSession) e.getKey();
-                gameSession.removeGameObject(getGirlBySocket(session));
+                gameSession.removeGameObject(getPlayerBySocket(session));
                 tmp.remove(session);
                 if (tmp.size() == 1) {
                     Broker.getInstance().send(tmp.get(0), GAME_OVER, "YOU WIN!");
@@ -109,7 +107,7 @@ public class SessionStorage {
                 }
             }
         }
-        girlToWebsocket.remove(getGirlBySocket(session));
+        girlToWebsocket.remove(getPlayerBySocket(session));
         log.info("Websocket session: " + session + "removed");
     }
 
