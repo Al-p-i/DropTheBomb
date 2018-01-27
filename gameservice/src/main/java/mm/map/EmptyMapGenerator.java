@@ -15,21 +15,21 @@ public class EmptyMapGenerator implements MapGenerator {
     @Override
     public void generateMap(GameSession session) {
         log.info("Generate map...");
-        for (int x = 0; x < 17; x++) {
+        for (int x = 0; x < 27; x++) {
             addWall(session, new Point(x, 0));
-            addWall(session, new Point(x, 12));
+            addWall(session, new Point(x, 16));
         }
-        for (int y = 1; y < 12; y++) {
+        for (int y = 1; y < 16; y++) {
             addWall(session, new Point(0, y));
-            addWall(session, new Point(16, y));
+            addWall(session, new Point(26, y));
         }
-        for (int i = 3; i < 10; i++) {
-            addBrick(session, new Point(15, i));
-            addBrick(session, new Point(1, i));
-        }
-        for (int i = 3; i < 14; i++) {
-            addBrick(session, new Point(i, 11));
+        for (int i = 3; i < 23; i++) {
             addBrick(session, new Point(i, 1));
+            addBrick(session, new Point(i, 15));
+        }
+        for (int i = 3; i < 13; i++) {
+            addBrick(session, new Point(1, i));
+            addBrick(session, new Point(25, i));
         }
         log.info("Map generated");
     }

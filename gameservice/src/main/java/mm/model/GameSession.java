@@ -50,13 +50,13 @@ public class GameSession implements Tickable {
                 position = new Point(1, 1);
                 break;
             case 2:
-                position = new Point(15, 11);
+                position = new Point(25, 15);
                 break;
             case 3:
-                position = new Point(15, 1);
+                position = new Point(25, 1);
                 break;
             case 4:
-                position = new Point(1, 11);
+                position = new Point(1, 15);
                 break;
             default:
                 position = new Point(1, 1);
