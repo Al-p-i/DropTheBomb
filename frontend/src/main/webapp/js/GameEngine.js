@@ -64,7 +64,8 @@ GameEngine = Class.extend({
             {id: "playerBoy", src: "img/george.png"},
             {id: "playerGirl", src: "img/betty.png"},
             {id: "playerGirl2", src: "img/betty2.png"},
-            {id: "tile_grass", src: "img/tile_grass.png"},
+            {id: "tile_grass", src: "img/theSand1.png"},
+            {id: "tile_grass2", src: "img/theSand2.png"},
             {id: "tile_wall", src: "img/tile_wall.png"},
             {id: "tile_wood", src: "img/tile_wood.png"},
             {id: "bomb", src: "img/bomb.png"},
@@ -135,9 +136,14 @@ GameEngine = Class.extend({
     drawTiles: function () {
         for (var i = 0; i < this.tilesY; i++) {
             for (var j = 0; j < this.tilesX; j++) {
-                // Grass tiles
                 var img = new Image();
-                img.src = "img/tile_grass.png";
+                x = Math.random();
+                if (x > 0.5) {
+                    img.src = "img/tileSand1.png";
+                } else {
+                    img.src = "img/tileSand2.png";
+                }
+                // Grass tiles
 
                 var bitmap = new createjs.Bitmap(img);
 
@@ -185,17 +191,17 @@ GameEngine = Class.extend({
     //     }
     // },
 
-     gameOver: function(msg) {
-         //location.reload();
-         gInputEngine.subscribers = [];
-         if (msg.data == "\"YOU LOSE\"") {
+    gameOver: function (msg) {
+        //location.reload();
+        gInputEngine.subscribers = [];
+        if (msg.data == "\"YOU LOSE\"") {
             createjs.Sound.stop("game");
             this.menu.showWithText("GAME OVER :(", "#ff4444");
-         } else {
+        } else {
             createjs.Sound.stop("game");
             this.menu.showWithText("YOU WON! :)", "#00FF00");
-         }
-     },
+        }
+    },
 
 
     restart: function () {
@@ -227,24 +233,24 @@ GameEngine = Class.extend({
 
     findObject: function (id) {
         [this.bombs, this.bonuses, this.tiles, this.players].forEach(function (it) {
-                    var i = it.length;
-                    while (i--) {
-                        if (id == it[i].id) {
-                            return true;
-                        }
-                    }
-                });
+            var i = it.length;
+            while (i--) {
+                if (id == it[i].id) {
+                    return true;
+                }
+            }
+        });
         return false;
-        },
+    },
 
     clearPlayers: function () {
-    [this.players, this.fires, this.bombs].forEach(function (it) {
-         var i = it.length;
-         while (i--) {
+        [this.players, this.fires, this.bombs].forEach(function (it) {
+            var i = it.length;
+            while (i--) {
                 it[i].remove();
                 it.splice(i, 1);
-        }
-    });
+            }
+        });
     },
 
     gc: function (gameObjects) {
@@ -277,8 +283,8 @@ GameEngine = Class.extend({
         }
 
         [this.players].forEach(function (it) {
-             var i = it.length;
-             while (i--) {
+            var i = it.length;
+            while (i--) {
                 if (!survivors.has(it[i].id)) {
                     it[i].remove();
                     it.splice(i, 1);
