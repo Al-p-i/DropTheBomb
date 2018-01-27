@@ -13,6 +13,7 @@ public class Player extends GameObject implements Movable, Tickable {
     private transient int bombRange = 1;
     private Bomb bomb;
     private int immunityTimer = 0;
+    public static final int BOMB_IMMINUTY = 3000;
 
     public Player(GameSession session, Point position) {
         super(session, new Point(position.getX() * GameObject.getWidthBox(),
@@ -53,6 +54,9 @@ public class Player extends GameObject implements Movable, Tickable {
             default:
                 return position;
         }
+        if (bomb != null) {
+            bomb.setPosition(position);
+        }
         return position;
     }
 
@@ -88,6 +92,9 @@ public class Player extends GameObject implements Movable, Tickable {
             default:
                 return position;
         }
+        if(bomb != null){
+            bomb.setPosition(position);
+        }
         return position;
     }
 
@@ -122,7 +129,7 @@ public class Player extends GameObject implements Movable, Tickable {
     }
 
     private void tickImmunityTimer(int elapsed) {
-        if(elapsed > immunityTimer){
+        if (elapsed > immunityTimer) {
             immunityTimer = 0;
         } else {
             immunityTimer -= elapsed;
@@ -167,5 +174,12 @@ public class Player extends GameObject implements Movable, Tickable {
 
     public void setBombImmune(int bombImmune) {
         immunityTimer = bombImmune;
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "id=" + id +
+                '}';
     }
 }

@@ -1,10 +1,12 @@
 package mm.model;
 
 import mm.geometry.Point;
+import mm.mechanics.BombGenerator;
+import mm.mechanics.RandomSingleBombGenerator;
 import mm.message.Message;
 import mm.message.Topic;
-import mm.mm.EmptyMapGenerator;
-import mm.mm.MapGenerator;
+import mm.map.EmptyMapGenerator;
+import mm.map.MapGenerator;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -23,7 +25,7 @@ public class GameSession implements Tickable {
     public GameSession(int playerCount, long id) {
         this.playerCount = playerCount;
         this.id = id;
-        mapGenerator.generateMap(this); //Unsafe construction
+        mapGenerator.generateMap(this); //TODO Unsafe construction
     }
 
     public int getPlayerCount() {

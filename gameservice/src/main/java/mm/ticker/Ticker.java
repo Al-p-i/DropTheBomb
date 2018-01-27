@@ -2,6 +2,8 @@ package mm.ticker;
 
 import mm.geometry.Bar;
 import mm.geometry.Point;
+import mm.mechanics.BombGenerator;
+import mm.mechanics.RandomSingleBombGenerator;
 import mm.message.Topic;
 import mm.model.*;
 import mm.model.Player;
@@ -27,6 +29,7 @@ public class Ticker extends Thread {
     private static final int FRAME_TIME = 1000 / FPS;
     private final Broker broker = Broker.getInstance();
     private final Queue<Action> inputQueue = new LinkedBlockingQueue<Action>();
+    private BombGenerator bombGiver = new RandomSingleBombGenerator();
 
     @Autowired
     SessionStorage storage;
@@ -43,6 +46,7 @@ public class Ticker extends Thread {
 
     @Override
     public void run() {
+        startGameActions();
         while (!Thread.currentThread().isInterrupted()) {
             if (isRunning) {
                 long started = System.currentTimeMillis();
@@ -51,7 +55,7 @@ public class Ticker extends Thread {
                 handleQueue();
                 act(FRAME_TIME);
                 checkCollisions();
-                //detonationBomb();
+                detonationBomb();
                 sendReplica();
                 long elapsed = System.currentTimeMillis() - started;
                 if (elapsed < FRAME_TIME) {
@@ -64,6 +68,12 @@ public class Ticker extends Thread {
                 return;
             }
         }
+    }
+
+    private void startGameActions() {
+        log.info("startGameActions");
+        bombGiver.generateBombs(gameSession); //TODO Unsafe construction
+        log.info("startGameActions finished");
     }
 
     public void putAction(Action action) {
@@ -148,9 +158,15 @@ public class Ticker extends Thread {
             }
             Bar otherBar = other.getPlayerBar();
             if (!playerBar.isColliding(otherBar)) {
-                player.setBomb(player.getBomb());
+                transmitBomb(player, other);
             }
         }
+    }
+
+    private void transmitBomb(Player player, Player other) {
+        other.setBomb(player.getBomb());
+        other.getBomb().resetLifeTime();
+        other.setBombImmune(Player.BOMB_IMMINUTY);
     }
 
     private void checkBombCollisions(Player player, Bar playerBar) {

@@ -1,4 +1,4 @@
-package mm.mm;
+package mm.map;
 
 import mm.geometry.Point;
 import mm.model.Brick;
