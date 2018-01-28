@@ -150,6 +150,8 @@ public class GameMechanics {
 
     private void transmitBomb(Player player, Player other) {
         other.setBomb(player.getBomb());
+        other.setSpeed(other.getSpeed() + Player.BOMB_CARRIER_SPEEDUP_ABS);
+        player.setSpeed(player.getSpeed() - Player.BOMB_CARRIER_SPEEDUP_ABS);
         player.setBomb(null);
         other.getBomb().reset();
         player.setBombImmune(Player.BOMB_IMMUNITY);
