@@ -10,7 +10,7 @@ public class Player extends GameObject implements Movable, Tickable {
     private static final int PLAYER_HEIGHT = 26;
     private Direction direction = Direction.IDLE;
     private Direction jumpDirection = Direction.IDLE;
-    private transient double speed = 0.3;
+    private transient double speed = GameConstants.DEFAULT_PLAYER_SPEED;
     private transient int bombCapacity = 1;
     private transient int bombRange = 1;
     private transient Bomb bomb;
@@ -179,7 +179,7 @@ public class Player extends GameObject implements Movable, Tickable {
     }
 
     public boolean canJump() {
-        return jumpTimer == 0;
+        return bomb == null && jumpTimer == 0;
     }
 
     public void restartJumpTimer() {
@@ -188,10 +188,6 @@ public class Player extends GameObject implements Movable, Tickable {
 
     public void setBombImmune(int bombImmune) {
         immunityTimer = bombImmune;
-    }
-
-    public double getSpeed() {
-        return speed;
     }
 
     public void setSpeed(double speed) {

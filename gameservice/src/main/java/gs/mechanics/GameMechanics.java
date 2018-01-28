@@ -91,7 +91,6 @@ public class GameMechanics {
                 changedObjects.add(bomb);
             }
             if (action.getAction().equals(Topic.JUMP) && action.getActor().canJump()) {
-                log.info(action.getActor() + " jump");
                 action.getActor().jump();
                 action.getActor().restartJumpTimer();
                 movedPlayers.add(action.getActor());
@@ -159,8 +158,8 @@ public class GameMechanics {
 
     private void transmitBomb(Player player, Player other) {
         other.setBomb(player.getBomb());
-        other.setSpeed(other.getSpeed() + Player.BOMB_CARRIER_SPEEDUP_ABS);
-        player.setSpeed(player.getSpeed() - Player.BOMB_CARRIER_SPEEDUP_ABS);
+        other.setSpeed(GameConstants.PLAYER_CARRYING_BOMB_SPEED);
+        player.setSpeed(GameConstants.DEFAULT_PLAYER_SPEED);
         player.setBomb(null);
         other.getBomb().reset();
         player.setBombImmune(Player.BOMB_IMMUNITY);

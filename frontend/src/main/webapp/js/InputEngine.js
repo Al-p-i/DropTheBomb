@@ -28,8 +28,8 @@ InputEngine = Class.extend({
         this.bind(40, 'down');
 
 
-        this.bind(32, 'bomb');
-        this.bind(81, 'jump');
+        this.bind(81, 'bomb');
+        this.bind(32, 'jump');
 
         this.bind(13, 'restart');
         this.bind(27, 'escape');
