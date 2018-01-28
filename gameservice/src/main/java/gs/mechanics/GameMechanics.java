@@ -44,6 +44,7 @@ public class GameMechanics {
         tickTickables(frameTime);
         checkCollisions(frameTime);
         detonationBomb();
+        randomTransmit();
         sendReplica();
     }
 
@@ -132,10 +133,16 @@ public class GameMechanics {
                 .filter(e -> !deadPlayers.contains(e))
                 .collect(Collectors.toList());
         Random random = new Random();
-        Player player = players.get(random.nextInt(players.size()));
-        Bomb bomb = new Bomb(gameSession, player.getPosition(), player, Bomb.DEFAULT_CARRIED_BOMB_LIFETIME);
-        player.setBomb(bomb);
-        gameSession.addGameObject(bomb);
+        boolean hasBomb = false;
+        for(Player player : players) {
+            if(player.hasBomb()) hasBomb = true;
+        }
+        if(!hasBomb) {
+            Player player = players.get(random.nextInt(players.size()));
+            Bomb bomb = new Bomb(gameSession, player.getPosition(), player, Bomb.DEFAULT_CARRIED_BOMB_LIFETIME);
+            player.setBomb(bomb);
+            gameSession.addGameObject(bomb);
+        }
     }
 
     private void tryBombTransmit(Player player, Bar playerBar) {
@@ -256,7 +263,6 @@ public class GameMechanics {
                         for (Player player : gameSession.getPlayers()) {
                             if (!player.getPlayerBar().isColliding(explosions.get(i).get(j))) {
                                 deadPlayers.add(player);
-                                if (player.hasBomb() && gameSession.getPlayers().size() > 0) randomTransmit();
                                 changedObjects.remove(player);
                             }
                         }
