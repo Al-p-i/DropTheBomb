@@ -33,17 +33,11 @@
         </div>
         <div id="game">
             <canvas id="canvas" width="864" height="544" style="background-color: gray;"></canvas>
-            <form method="POST" id="nameform" action="javascript:void(null);">
-                <input id="gamelink" name="gamelink"
-                       size="81" type="text" placeholder="Player count to get link or link to connect">
-                <button onclick="getLink()">Get link</button>
-                <button onclick="connectToPrivateGame()">Connect</button>
-            </form>
         </div>
-        <h3>How to play</h3>
+        <h3>You have only 7 seconds to transmit the bomb, be fast!</h3>
         <ul>
-            <li><strong>arrow keys</strong> &hellip; move</li>
-            <li><strong>spacebar</strong> &hellip; plant the bomb</li>
+            <li><strong>arrow keys</strong> - move</li>
+            <li><strong>spacebar</strong> - plant the bomb</li>
         </ul>
         <hr>
 
@@ -56,28 +50,3 @@
     </div>
 </body>
 </html>
-
-<script>
-    function getLink() {
-        var url = "http://localhost:8080/";
-        var count = document.getElementById('gamelink').value;
-        var settings = {
-            "method": "POST",
-            "crossDomain": true,
-            "url": url + "matchmaker/link",
-            "data": {playerCount: count}
-        };
-        $.ajax(settings).done(function(response) {
-            $("#gamelink").val(response);
-        }).fail(function (jqXHR, textStatus) {
-            alert(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
-            console.log(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
-        });
-    }
-</script>
-
-<script>
-    function connectToPrivateGame() {
-        gGameEngine.serverProxy.connectToGameServer(document.getElementById('gamelink').value, "name=Gitler")
-    }
-</script>

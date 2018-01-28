@@ -8,12 +8,13 @@ public class Player extends GameObject implements Movable, Tickable {
     private static final int PLAYER_WIDTH = 26;
     private static final int PLAYER_HEIGHT = 26;
     private Direction direction = Direction.IDLE;
-    private transient double speed = 0.5;
+    private transient double speed = 0.3;
     private transient int bombCapacity = 1;
     private transient int bombRange = 1;
-    private Bomb bomb = null;
+    private transient Bomb bomb;
     private int immunityTimer = 0;
     public static final int BOMB_IMMUNITY = 2000;
+    public static final double BOMB_CARRIER_SPEEDUP_ABS = 0.2;
 
     public Player(GameSession session, Point position) {
         super(session, new Point(position.getX() * GameObject.getWidthBox(),
@@ -173,6 +174,14 @@ public class Player extends GameObject implements Movable, Tickable {
 
     public void setBombImmune(int bombImmune) {
         immunityTimer = bombImmune;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
     }
 
     @Override
