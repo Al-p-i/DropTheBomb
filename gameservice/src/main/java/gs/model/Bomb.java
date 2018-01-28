@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 public class Bomb extends GameObject implements Tickable {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(Bomb.class);
-    public static final int DEFAULT_CARRIED_BOMB_LIFETIME = 7000;
+    public static final int DEFAULT_CARRIED_BOMB_LIFETIME = 10000;
     public static final int DEFAULT_PLANTED_BOMB_LIFETIME = 2000;
     private static final int BOMB_WIDTH = 28;
     private static final int BOMB_HEIGHT = 28;

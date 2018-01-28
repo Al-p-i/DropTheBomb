@@ -61,6 +61,9 @@ ServerProxy = Class.extend({
         gInputEngine.subscribe('bomb', function () {
             self.socket.send(gMessages.plantBomb());
         });
+        gInputEngine.subscribe('jump', function () {
+            self.socket.send(gMessages.jump());
+        });
     },
 
     connectToGameServer : function(gameId) {

@@ -29,6 +29,15 @@ Messages = Class.extend({
         return JSON.stringify(template);
     },
 
+    jump: function () {
+        var template = {
+            topic: "JUMP",
+            data: {}
+        };
+
+        return JSON.stringify(template);
+    },
+
     handleReplica: function (msg) {
         var gameObjects = JSON.parse(msg.data);
         var survivors = new Set();
