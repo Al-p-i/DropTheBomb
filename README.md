@@ -1,6 +1,7 @@
-# Bombergirl
+# Drop the bomb
 
-This is multiplayer version of the Bomberman.<br>
+The hybrid of "Hot potato" and "Bomberman".<br>
+Stack: Java, Spring, JavaScript, HTML5 <br>
+Developed on the GGJ 2018, Moscow<br>
 Frontend inspired by <a href=https://github.com/MattSkala/html5-bombergirl>Matt Scala</a>.<br>
-Backend written in Java with Spring Boot on the <a href=https://github.com/rybalkinsd/atom>Technoatom</a> course.<br>
-<del>Installation guide:</del> 404
+GGJ link: <a href='https://globalgamejam.org/2018/games/dropthebomb'>Game</a>
