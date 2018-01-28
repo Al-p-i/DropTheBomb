@@ -1,4 +1,4 @@
-rootProject.name = 'Bombergirl'
+rootProject.name = 'DropTheBomb'
 include 'gameservice'
 include 'mm'
 include 'frontend'
