@@ -7,6 +7,7 @@ import gs.model.*;
 import gs.network.Broker;
 import gs.storage.SessionStorage;
 import gs.ticker.Action;
+import gs.util.GameConstants;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -90,6 +91,12 @@ public class GameMechanics {
                 gameSession.addGameObject(bomb);
                 changedObjects.add(bomb);
             }
+            if (action.getAction().equals(Topic.JUMP) && action.getActor().canJump()) {
+                log.info(action.getActor() + " jump");
+                action.getActor().jump();
+                action.getActor().restartJumpTimer();
+                movedPlayers.add(action.getActor());
+            }
             if (action.getAction().equals(Topic.MOVE)
                     && !movedPlayers.contains(action.getActor())) {
                 action.getActor().setDirection(action.getData());
@@ -109,6 +116,7 @@ public class GameMechanics {
     public void checkCollisions(int frameTime) {
         for (Player player : gameSession.getPlayers()) {
             Bar playerBar = player.getPlayerBar();
+            checkFieldBordersCollisions(player);
             checkWallCollisions(player, playerBar, frameTime);
             checkBrickCollisions(player, playerBar, frameTime);
             checkBonusCollisions(player, playerBar, frameTime);
@@ -127,7 +135,7 @@ public class GameMechanics {
                 .collect(Collectors.toList());
         Random random = new Random();
         Player player = players.get(random.nextInt(players.size()));
-        Bomb bomb = new Bomb(gameSession, player.getPosition(), player, Bomb.DEFAULT_CARRIED_BOMB_LIFETIME) ;
+        Bomb bomb = new Bomb(gameSession, player.getPosition(), player, Bomb.DEFAULT_CARRIED_BOMB_LIFETIME);
         player.setBomb(bomb);
         gameSession.addGameObject(bomb);
     }
@@ -182,7 +190,7 @@ public class GameMechanics {
         for (Brick brick : gameSession.getBricks()) {
             Bar barBrick = brick.getBar();
             if (!playerBar.isColliding(barBrick))
-                player.moveBack(frameTime);
+                player.moveBack();
         }
     }
 
@@ -190,7 +198,16 @@ public class GameMechanics {
         for (Wall wall : gameSession.getWalls()) {
             Bar barWall = wall.getBar();
             if (!playerBar.isColliding(barWall))
-                player.moveBack(frameTime);
+                player.moveBack();
+        }
+    }
+
+    private void checkFieldBordersCollisions(Player player) {
+        if (player.getPosition().getX() < 0
+                || player.getPosition().getY() < 0
+                || player.getPosition().getX() > GameConstants.GAME_WIDTH_CELLS * GameConstants.PIXELS_IN_CELL
+                || player.getPosition().getY() > GameConstants.GAME_HEIGHT_CELLS * GameConstants.PIXELS_IN_CELL) {
+            player.moveBack();
         }
     }
 

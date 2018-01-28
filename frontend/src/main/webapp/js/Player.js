@@ -21,7 +21,8 @@ Player = Entity.extend({
         'left': 'left',
         'down': 'down',
         'right': 'right',
-        'bomb': 'bomb'
+        'bomb': 'bomb',
+        'jump': 'jump'
     },
 
     /**
