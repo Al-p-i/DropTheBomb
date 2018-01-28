@@ -45,7 +45,6 @@ public class GameMechanics {
         checkCollisions(frameTime);
         detonationBomb();
         sendReplica();
-        log.info(Integer.toString(changedObjects.size()));
     }
 
 
@@ -207,6 +206,7 @@ public class GameMechanics {
                 || player.getPosition().getY() < 0
                 || player.getPosition().getX() > GameConstants.GAME_WIDTH_CELLS * GameConstants.PIXELS_IN_CELL
                 || player.getPosition().getY() > GameConstants.GAME_HEIGHT_CELLS * GameConstants.PIXELS_IN_CELL) {
+            log.info("out of field");
             player.moveBack();
         }
     }
@@ -276,7 +276,6 @@ public class GameMechanics {
                                 .get(i).get(j).getLeftPoint()).getType().equals("Pawn")) {
                             continue;
                         }
-                        log.info("111111111111111");
                         for(Brick brick : this.getBrickCollisions(explosions.get(i).get(j).getCollidingBars())) {
                             objectList.add(brick);
                             changedObjects.add(brick);

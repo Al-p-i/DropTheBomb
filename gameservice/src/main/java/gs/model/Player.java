@@ -17,7 +17,7 @@ public class Player extends GameObject implements Movable, Tickable {
     private int immunityTimer = 0;
     private int jumpTimer = 0;
     public static final int BOMB_IMMUNITY = 2000;
-    public static final int JUMP_TIMEOUT = 1000;
+    public static final int JUMP_TIMEOUT = 2000;
     public static final double BOMB_CARRIER_SPEEDUP_ABS = 0.2;
     private transient Point previousPosition;
 
@@ -25,10 +25,10 @@ public class Player extends GameObject implements Movable, Tickable {
         super(session, new Point(position.getX() * GameObject.getWidthBox(),
                         position.getY() * GameObject.getWidthBox()),
                 "Pawn", PLAYER_WIDTH, PLAYER_HEIGHT);
-        this.previousPosition = position;
+        this.previousPosition = new Point(position.getX(), position.getY());
     }
 
-    
+
     public void plantBomb() {
         Point bitmapPosition = this.position.convertToBitmapPosition();
         new Bomb(this.session, bitmapPosition, this, Bomb.DEFAULT_PLANTED_BOMB_LIFETIME);
@@ -41,13 +41,15 @@ public class Player extends GameObject implements Movable, Tickable {
             jumpDirection = direction;
         }
         int delta = (int) (speed * (double) time);
-        previousPosition = position;
+        if (!previousPosition.equals(position)) {
+            previousPosition = new Point(position.getX(), position.getY());
+        }
         return moveDelta(delta, direction);
     }
 
     public Point jump() {
         int delta = GameConstants.JUMP_PIXELS;
-        previousPosition = position;
+        previousPosition = new Point(position.getX(), position.getY());
         return moveDelta(delta, jumpDirection);
     }
 
@@ -83,41 +85,8 @@ public class Player extends GameObject implements Movable, Tickable {
     }
 
     public Point moveBack() {
-        this.position = previousPosition;
-        /*int delta = (int) (speed * (double) time);
-        switch (direction) {
-            case DOWN:
-                moveLog(direction, position.getX(), position.getY(),
-                        position.getX(), position.getY() + delta);
-                setPosition(new Point(position.getX(), position.getY() + delta));
-                setDirection(Direction.IDLE);
-                break;
-            case UP:
-                moveLog(direction, position.getX(), position.getY(),
-                        position.getX(), position.getY() - delta);
-                setPosition(new Point(position.getX(), position.getY() - delta));
-                setDirection(Direction.IDLE);
-                break;
-            case LEFT:
-                moveLog(direction, position.getX(), position.getY(),
-                        position.getX() + delta, position.getY());
-                setPosition(new Point(position.getX() + delta, position.getY()));
-                setDirection(Direction.IDLE);
-                break;
-            case RIGHT:
-                moveLog(direction, position.getX(), position.getY(),
-                        position.getX() - delta, position.getY());
-                setPosition(new Point(position.getX() - delta, position.getY()));
-                setDirection(Direction.IDLE);
-                break;
-            case IDLE:
-                return position;
-            default:
-                return position;
-        }
-        if(bomb != null){
-            bomb.setPosition(position);
-        }*/
+        log.info("{} move back from {} to {}", this, position, previousPosition);
+        this.position = new Point(previousPosition.getX(), previousPosition.getY());
         return position;
     }
 
@@ -146,9 +115,15 @@ public class Player extends GameObject implements Movable, Tickable {
 
     @Override
     public void tick(int elapsed) {
-        move(elapsed);
+        if (!alreadyJumpedThisTick()) {
+            move(elapsed);
+        }
         tickImmunityTimer(elapsed);
         tickJumpTimer(elapsed);
+    }
+
+    private boolean alreadyJumpedThisTick() {
+        return jumpTimer == JUMP_TIMEOUT;
     }
 
     private void tickImmunityTimer(int elapsed) {
@@ -232,13 +207,5 @@ public class Player extends GameObject implements Movable, Tickable {
 
     public boolean hasBomb() {
         return !(bomb == null);
-    }
-
-    public Point getPreviousPosition() {
-        return previousPosition;
-    }
-
-    public void setPreviousPosition(Point previousPosition) {
-        this.previousPosition = previousPosition;
     }
 }
