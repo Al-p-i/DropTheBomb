@@ -76,8 +76,8 @@ Messages = Class.extend({
             gGameEngine.bombs.push(bomb);
         }
 
-        console.log(position.x);
-        console.log(position.y);
+        //console.log(position.x);
+        //console.log(position.y);
     },
 
     handleBonus: function(obj) {

@@ -19,6 +19,14 @@ public class Bar implements Collider {
         rightPoint = new Point(Math.max(x1, x2), Math.max(y1, y2));
     }
 
+    @Override
+    public String toString() {
+        return "Bar{" +
+                "leftPoint=" + leftPoint +
+                ", rightPoint=" + rightPoint +
+                '}';
+    }
+
     public Bar(Point point) {
         this.leftPoint = point;
         this.rightPoint = new Point(point.getX() + GameObject.getWidthBox(), point.getY() + GameObject.getHeightBox());
@@ -38,8 +46,8 @@ public class Bar implements Collider {
         return allExplosions;
     }
 
-    public List<Point> getCollidingBars() {
-        List<Point> bars = new ArrayList<>();
+    public List<Bar> getCollidingBars() {
+        List<Bar> bars = new ArrayList<>();
         for(Point point : this.getPoints()) {
             bars.add(point.getBar());
             System.out.println(point.getBar().toString());
@@ -75,18 +83,30 @@ public class Bar implements Collider {
     public boolean isColliding(Collider other) {
         if (other.getClass() == this.getClass()) {
             Bar bar = (Bar) other;
-            return leftPoint.getX() >= bar.rightPoint.getX()
-                    || rightPoint.getX() <= bar.leftPoint.getX()
-                    || leftPoint.getY() >= bar.rightPoint.getY()
-                    || rightPoint.getY() <= bar.leftPoint.getY();
+            return leftPoint.getX() > bar.rightPoint.getX()
+                    || rightPoint.getX() < bar.leftPoint.getX()
+                    || leftPoint.getY() > bar.rightPoint.getY()
+                    || rightPoint.getY() < bar.leftPoint.getY();
         } else if (other.getClass() == Point.class) {
             Point point = (Point) other;
-            return leftPoint.getX() >= point.getX() || leftPoint.getY() >= point.getY()
-                    || rightPoint.getX() <= point.getX() || rightPoint.getY() <= point.getY();
+            return leftPoint.getX() > point.getX() || leftPoint.getY() > point.getY()
+                    || rightPoint.getX() < point.getX() || rightPoint.getY() < point.getY();
         } else throw new IllegalArgumentException();
     }
 
     public Point getLeftPoint() {
         return leftPoint;
+    }
+
+    public Point getRightPoint() {
+        return rightPoint;
+    }
+
+    public Point getUpLeftPoint() {
+        return new Point(leftPoint.getX(), leftPoint.getY() + 32);
+    }
+
+    public Point getBotRightPoint() {
+        return new Point(rightPoint.getX(), rightPoint.getY() - 32);
     }
 }

@@ -44,7 +44,6 @@ public class GameMechanics {
         checkCollisions(frameTime);
         detonationBomb();
         sendReplica();
-        log.info(Integer.toString(changedObjects.size()));
     }
 
 
@@ -127,7 +126,7 @@ public class GameMechanics {
                 .collect(Collectors.toList());
         Random random = new Random();
         Player player = players.get(random.nextInt(players.size()));
-        Bomb bomb = new Bomb(gameSession, player.getPosition(), player, Bomb.DEFAULT_CARRIED_BOMB_LIFETIME) ;
+        Bomb bomb = new Bomb(gameSession, player.getPosition(), player, Bomb.DEFAULT_CARRIED_BOMB_LIFETIME);
         player.setBomb(bomb);
         gameSession.addGameObject(bomb);
     }
@@ -240,39 +239,61 @@ public class GameMechanics {
                         for (Player player : gameSession.getPlayers()) {
                             if (!player.getPlayerBar().isColliding(explosions.get(i).get(j))) {
                                 deadPlayers.add(player);
-                                if(player.hasBomb()) randomTransmit();
+                                if (player.hasBomb() && gameSession.getPlayers().size() > 0) randomTransmit();
                                 changedObjects.remove(player);
                             }
                         }
                         if (gameSession.getGameObjectByPosition(explosions
-                                .get(i).get(j).getLeftPoint()) == null) {
+                                .get(i).get(j).getLeftPoint().floor()) == null || gameSession.getGameObjectByPosition(explosions.get(i).get(j)
+                                .getLeftPoint().floor()).getType().equals("Wall")) {
                             Fire fire = new Fire(gameSession, explosions.get(i).get(j).getLeftPoint());
                             changedObjects.add(fire);
                             gameSession.addGameObject(fire);
                             continue;
                         }
                         if (gameSession.getGameObjectByPosition(explosions
-                                .get(i).get(j).getLeftPoint()).getType().equals("Bonus")
+                                .get(i).get(j).getLeftPoint().floor()).getType().equals("Bonus")
                                 || gameSession.getGameObjectByPosition(explosions
-                                .get(i).get(j).getLeftPoint()).getType().equals("Bomb")
+                                .get(i).get(j).getLeftPoint().floor()).getType().equals("Bomb")
                                 || gameSession.getGameObjectByPosition(explosions
-                                .get(i).get(j).getLeftPoint()).getType().equals("Pawn")) {
+                                .get(i).get(j).getLeftPoint().floor()).getType().equals("Pawn")) {
                             continue;
                         }
-                        log.info("111111111111111");
-                        for(Brick brick : this.getBrickCollisions(explosions.get(i).get(j).getCollidingBars())) {
-                            objectList.add(brick);
-                            changedObjects.add(brick);
-                            Fire fire = new Fire(gameSession, explosions.get(i).get(j).getLeftPoint());
-                            gameSession.addGameObject(fire);
-                            changedObjects.add(fire);
-                            if (isBonus()) {
-                                Bonus bonus = new Bonus(gameSession, brick.getPosition(),
-                                        bonusType());
-                                changedObjects.add(bonus);
-                                gameSession.addGameObject(bonus);
+                        List<GameObject> exploded = new ArrayList<>();
+                        exploded.add(gameSession.getGameObjectByPosition(explosions.get(i).get(j)
+                                .getLeftPoint().floor()));
+                        log.info(explosions.get(i).get(j)
+                                .getLeftPoint().floor().toString());
+                        exploded.add(gameSession.getGameObjectByPosition(explosions.get(i).get(j)
+                                .getRightPoint().floor()));
+                        log.info(explosions.get(i).get(j)
+                                .getRightPoint().floor().toString());
+                        exploded.add(gameSession.getGameObjectByPosition(explosions.get(i).get(j)
+                                .getUpLeftPoint().floor()));
+                        log.info(explosions.get(i).get(j)
+                                .getUpLeftPoint().floor().toString());
+                        exploded.add(gameSession.getGameObjectByPosition(explosions.get(i).get(j)
+                                .getBotRightPoint().floor()));
+                        log.info(explosions.get(i).get(j)
+                                .getBotRightPoint().floor().toString());
+                        for (GameObject obj : exploded) {
+                            if (obj != null) {
+                                log.info(obj.getType());
+                                log.info(obj.getPosition().toString());
+                                if (obj.getType().equals("Wood")) {
+                                    objectList.add(obj);
+                                    changedObjects.add(obj);
+                                    Fire fire = new Fire(gameSession, explosions.get(i).get(j).getLeftPoint());
+                                    gameSession.addGameObject(fire);
+                                    changedObjects.add(fire);
+                                    /*if (isBonus()) {
+                                        Bonus bonus = new Bonus(gameSession, explosions.get(i).get(j).getLeftPoint(),
+                                                bonusType());
+                                        changedObjects.add(bonus);
+                                        gameSession.addGameObject(bonus);
+                                    }*/
+                                }
                             }
-                            break;
                         }
                         objectList.add(gameSession.getGameObjectByPosition(explosions
                                 .get(i).get(j).getLeftPoint()));
@@ -295,7 +316,7 @@ public class GameMechanics {
         log.info(points.toString());
         List<Brick> walls = new ArrayList<>();
         for (Point point : points) {
-            if(gameSession.getGameObjectByPosition(point) instanceof Brick) {
+            if (gameSession.getGameObjectByPosition(point) instanceof Brick) {
                 walls.add((Brick) gameSession.getGameObjectByPosition(point));
             }
         }
