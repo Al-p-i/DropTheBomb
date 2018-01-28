@@ -40,6 +40,12 @@ public class Point implements Collider {
         return allExplosions;
     }
 
+    public Point getBar() {
+        int x = this.x / 32;
+        int y = this.y / 32;
+        return new Point(x, y);
+    }
+
     public static Point getUp1Position(Point point) {
         return new Point(point.getX(), point.getY() + GameObject.getHeightBox());
     }

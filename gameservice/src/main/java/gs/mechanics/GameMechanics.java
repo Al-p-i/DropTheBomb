@@ -44,6 +44,7 @@ public class GameMechanics {
         checkCollisions(frameTime);
         detonationBomb();
         sendReplica();
+        log.info(Integer.toString(changedObjects.size()));
     }
 
 
@@ -53,6 +54,7 @@ public class GameMechanics {
 
     private void sendReplica() {
         for (WebSocketSession session : SessionStorage.getWebsocketsByGameSession(gameSession)) {
+            gameSession.getAllBombs().forEach(e -> changedObjects.add(e));
             Broker.getInstance().send(session, Topic.REPLICA, changedObjects);
             SessionStorage.getPlayerBySocket(session).setDirection(Movable.Direction.IDLE);
         }
@@ -236,6 +238,7 @@ public class GameMechanics {
                         for (Player player : gameSession.getPlayers()) {
                             if (!player.getPlayerBar().isColliding(explosions.get(i).get(j))) {
                                 deadPlayers.add(player);
+                                if(player.hasBomb()) randomTransmit();
                                 changedObjects.remove(player);
                             }
                         }
@@ -254,21 +257,15 @@ public class GameMechanics {
                                 .get(i).get(j).getLeftPoint()).getType().equals("Pawn")) {
                             continue;
                         }
-                        if (gameSession.getGameObjectByPosition(explosions.get(i).get(j)
-                                .getLeftPoint()).getType().equals("Wall")) {
-                            break;
-                        }
-                        if (gameSession.getGameObjectByPosition(explosions.get(i).get(j)
-                                .getLeftPoint()).getType().equals("Wood")) {
-                            objectList.add(gameSession.getGameObjectByPosition(explosions
-                                    .get(i).get(j).getLeftPoint()));
-                            changedObjects.add(gameSession.getGameObjectByPosition(explosions
-                                    .get(i).get(j).getLeftPoint()));
+                        log.info("111111111111111");
+                        for(Brick brick : this.getBrickCollisions(explosions.get(i).get(j).getCollidingBars())) {
+                            objectList.add(brick);
+                            changedObjects.add(brick);
                             Fire fire = new Fire(gameSession, explosions.get(i).get(j).getLeftPoint());
                             gameSession.addGameObject(fire);
                             changedObjects.add(fire);
                             if (isBonus()) {
-                                Bonus bonus = new Bonus(gameSession, explosions.get(i).get(j).getLeftPoint(),
+                                Bonus bonus = new Bonus(gameSession, brick.getPosition(),
                                         bonusType());
                                 changedObjects.add(bonus);
                                 gameSession.addGameObject(bonus);
@@ -283,13 +280,24 @@ public class GameMechanics {
                         gameSession.addGameObject(fire);
                     }
                 }
-                randomTransmit();
+                gameSession.removeBomb(bomb);
             }
         }
 
         for (GameObject gameObject : objectList) {
             gameSession.removeGameObject(gameObject);
         }
+    }
+
+    private List<Brick> getBrickCollisions(List<Point> points) {
+        log.info(points.toString());
+        List<Brick> walls = new ArrayList<>();
+        for (Point point : points) {
+            if(gameSession.getGameObjectByPosition(point) instanceof Brick) {
+                walls.add((Brick) gameSession.getGameObjectByPosition(point));
+            }
+        }
+        return walls;
     }
 
     private boolean isBonus() {

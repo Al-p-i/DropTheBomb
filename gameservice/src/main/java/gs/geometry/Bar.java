@@ -5,6 +5,7 @@ import gs.model.GameObject;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Bar implements Collider {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(Bomb.class);
@@ -35,6 +36,24 @@ public class Bar implements Collider {
         }
 
         return allExplosions;
+    }
+
+    public List<Point> getCollidingBars() {
+        List<Point> bars = new ArrayList<>();
+        for(Point point : this.getPoints()) {
+            bars.add(point.getBar());
+            System.out.println(point.getBar().toString());
+        }
+        return bars;
+    }
+
+    private List<Point> getPoints() {
+        List<Point> points = new ArrayList<>();
+        points.add(this.leftPoint);
+        points.add(this.rightPoint);
+        points.add(new Point(this.leftPoint.getX(), this.leftPoint.getY() - 32));
+        points.add(new Point(this.leftPoint.getX() + 32, this.leftPoint.getY()));
+        return points;
     }
 
     @Override

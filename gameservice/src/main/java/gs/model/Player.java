@@ -11,7 +11,7 @@ public class Player extends GameObject implements Movable, Tickable {
     private transient double speed = 0.5;
     private transient int bombCapacity = 1;
     private transient int bombRange = 1;
-    private Bomb bomb;
+    private Bomb bomb = null;
     private int immunityTimer = 0;
     public static final int BOMB_IMMUNITY = 2000;
 
@@ -180,5 +180,9 @@ public class Player extends GameObject implements Movable, Tickable {
         return "Player{" +
                 "id=" + id +
                 '}';
+    }
+
+    public boolean hasBomb() {
+        return !(bomb == null);
     }
 }

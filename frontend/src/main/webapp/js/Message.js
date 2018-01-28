@@ -32,7 +32,7 @@ Messages = Class.extend({
     handleReplica: function (msg) {
         var gameObjects = JSON.parse(msg.data);
         var survivors = new Set();
-
+        //console.log(msg.data);
         gGameEngine.gc(gameObjects);
     },
 
@@ -75,6 +75,9 @@ Messages = Class.extend({
             bomb = new Bomb(obj.id, position);
             gGameEngine.bombs.push(bomb);
         }
+
+        console.log(position.x);
+        console.log(position.y);
     },
 
     handleBonus: function(obj) {

@@ -18,6 +18,7 @@ public class Bomb extends GameObject implements Tickable {
                 "Bomb", BOMB_WIDTH, BOMB_HEIGHT);
         this.owner = owner;
         this.lifetime = lifetime;
+        session.addBomb(this);
     }
 
     public Player getOwner() {

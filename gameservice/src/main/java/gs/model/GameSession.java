@@ -14,6 +14,7 @@ public class GameSession implements Tickable {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GameSession.class);
     private final int playerCount;
     private final long id;
+    private List<Bomb> bombs = new ArrayList<>();
     private int connectedPlayers = 0;
     private List<GameObject> gameObjects = new ArrayList<>();
     //ID for game objects
@@ -173,5 +174,21 @@ public class GameSession implements Tickable {
 
     public boolean isReady() {
         return connectedPlayers == playerCount;
+    }
+
+    public void addBomb(Bomb bomb) {
+        bombs.add(bomb);
+    }
+
+    public void removeBomb(Bomb bomb) {
+        bombs.remove(bomb);
+    }
+
+    public List<GameObject> getAllBombs() {
+        List<GameObject> list = new ArrayList<>();
+        for(Bomb bomb : this.bombs) {
+            list.add((GameObject) bomb);
+        }
+        return list;
     }
 }
