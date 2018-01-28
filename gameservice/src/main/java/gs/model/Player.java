@@ -11,7 +11,7 @@ public class Player extends GameObject implements Movable, Tickable {
     private transient double speed = 0.3;
     private transient int bombCapacity = 1;
     private transient int bombRange = 1;
-    private Bomb bomb;
+    private transient Bomb bomb;
     private int immunityTimer = 0;
     public static final int BOMB_IMMUNITY = 2000;
     public static final double BOMB_CARRIER_SPEEDUP_ABS = 0.2;
