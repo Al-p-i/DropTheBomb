@@ -103,10 +103,10 @@ public class Bar implements Collider {
     }
 
     public Point getUpLeftPoint() {
-        return new Point(leftPoint.getX(), leftPoint.getY() + 32);
+        return new Point(leftPoint.getX(), leftPoint.getY() + 31);
     }
 
     public Point getBotRightPoint() {
-        return new Point(rightPoint.getX(), rightPoint.getY() - 32);
+        return new Point(rightPoint.getX(), rightPoint.getY() - 31);
     }
 }
