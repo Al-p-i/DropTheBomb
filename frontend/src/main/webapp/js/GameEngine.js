@@ -260,13 +260,13 @@ GameEngine = Class.extend({
             var wasDeleted = false;
             var obj = gameObjects[i];
 
-            if (obj.type == 'Pawn') {
+            if (obj.type == 'Pawn' || obj.type == 'Bomb') {
                 gMessages.handler[obj.type](obj);
                 survivors.add(obj.id);
                 continue;
             }
 
-            [this.tiles, this.bombs, this.bonuses].forEach(function (it) {
+            [this.tiles, this.bonuses].forEach(function (it) {
                 var i = it.length;
                 while (i--) {
                     if (obj.id == it[i].id) {
@@ -282,7 +282,7 @@ GameEngine = Class.extend({
             }
         }
 
-        [this.players].forEach(function (it) {
+        [this.players, this.bombs].forEach(function (it) {
             var i = it.length;
             while (i--) {
                 if (!survivors.has(it[i].id)) {

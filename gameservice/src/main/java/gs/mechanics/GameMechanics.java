@@ -12,8 +12,11 @@ import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
+import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
 
 import static gs.message.Topic.GAME_OVER;
 
@@ -114,6 +117,17 @@ public class GameMechanics {
                 changedObjects.add(player.getBomb());
             }
         }
+    }
+
+    private void randomTransmit() {
+        List<Player> players = gameSession.getPlayers().stream()
+                .filter(e -> !deadPlayers.contains(e))
+                .collect(Collectors.toList());
+        Random random = new Random();
+        Player player = players.get(random.nextInt(players.size()));
+        Bomb bomb = new Bomb(gameSession, player.getPosition(), player, Bomb.DEFAULT_CARRIED_BOMB_LIFETIME) ;
+        player.setBomb(bomb);
+        gameSession.addGameObject(bomb);
     }
 
     private void tryBombTransmit(Player player, Bar playerBar) {
@@ -269,6 +283,7 @@ public class GameMechanics {
                         gameSession.addGameObject(fire);
                     }
                 }
+                randomTransmit();
             }
         }
 
