@@ -49,7 +49,7 @@ public class ConnectionHandler extends TextWebSocketHandler implements WebSocket
             for (Player p : gameSession.getPlayers()) {
                 if(!player.equals(p)){
                     WebSocketSession otherSession = SessionStorage.getWebsocketByPlayer(p);
-                    SessionStorage.send(otherSession, Topic.REPLICA, Collections.singletonList(player));
+                    SessionStorage.send(otherSession, Topic.REPLICA, gameSession.getPlayers());
                 }
             }
 
