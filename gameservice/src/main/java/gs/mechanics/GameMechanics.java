@@ -4,7 +4,6 @@ import gs.geometry.Bar;
 import gs.geometry.Point;
 import gs.message.Topic;
 import gs.model.*;
-import gs.network.Broker;
 import gs.storage.SessionStorage;
 import gs.ticker.Action;
 import gs.util.GameConstants;
@@ -56,7 +55,7 @@ public class GameMechanics {
     private void sendReplica() {
         for (WebSocketSession session : SessionStorage.getWebsocketsByGameSession(gameSession)) {
             gameSession.getAllBombs().forEach(e -> changedObjects.add(e));
-            Broker.getInstance().send(session, Topic.REPLICA, changedObjects);
+            SessionStorage.send(session, Topic.REPLICA, changedObjects);
             SessionStorage.getPlayerBySocket(session).setDirection(Movable.Direction.IDLE);
         }
 
@@ -67,7 +66,7 @@ public class GameMechanics {
                 if (SessionStorage.getPlayerBySocket(session) == player) {
                     closed.add(session);
                     System.out.println("SESSION " + SessionStorage.getWebsocketByPlayer(player));
-                    Broker.getInstance().send(session, GAME_OVER, "YOU LOSE");
+                    SessionStorage.send(session, GAME_OVER, "YOU LOSE");
                 }
             }
         }

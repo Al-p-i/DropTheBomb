@@ -31,7 +31,7 @@ public class MatchmakerService {
         }
     }
 
-    public String getLink(@NotNull int playerCount) {
+    public String getLink(int playerCount) {
         String link = client.createPost(playerCount);
         System.out.println(link);
         return link;
