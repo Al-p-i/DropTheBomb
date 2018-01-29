@@ -67,9 +67,9 @@ public class GameSession implements Tickable {
     }
 
     public boolean removeGameObject(GameObject object) {
-/*        if (object instanceof Player) {
+        if (object instanceof Player) {
             connectedPlayers--;
-        }*/
+        }
         return gameObjects.remove(object);
     }
 

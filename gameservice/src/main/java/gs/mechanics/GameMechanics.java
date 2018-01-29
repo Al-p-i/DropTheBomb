@@ -237,17 +237,17 @@ public class GameMechanics {
 
 
     private void detonationBomb() {
-        ArrayList<GameObject> objectList = new ArrayList<>();
+        ArrayList<GameObject> objectsToRemove = new ArrayList<>();
         for (Fire fire : gameSession.getFire()) {
             if (fire.dead()) {
-                objectList.add(fire);
+                objectsToRemove.add(fire);
             }
         }
 
         for (Bomb bomb : gameSession.getBombs()) {
             if (bomb.dead()) {
                 bomb.getOwner().incBombCapacity();
-                objectList.add(bomb);
+                objectsToRemove.add(bomb);
                 changedObjects.add(bomb);
 
                 Fire currentFire = new Fire(gameSession, bomb.getPosition());
@@ -303,7 +303,7 @@ public class GameMechanics {
                                 log.info(obj.getType());
                                 log.info(obj.getPosition().toString());
                                 if (obj.getType().equals("Wood")) {
-                                    objectList.add(obj);
+                                    objectsToRemove.add(obj);
                                     changedObjects.add(obj);
                                     Fire fire = new Fire(gameSession, explosions.get(i).get(j).getLeftPoint());
                                     gameSession.addGameObject(fire);
@@ -317,7 +317,7 @@ public class GameMechanics {
                                 }
                             }
                         }
-                        objectList.add(gameSession.getGameObjectByPosition(explosions
+                        objectsToRemove.add(gameSession.getGameObjectByPosition(explosions
                                 .get(i).get(j).getLeftPoint()));
                         Fire fire = new Fire(gameSession, explosions
                                 .get(i).get(j).getLeftPoint());
@@ -329,7 +329,7 @@ public class GameMechanics {
             }
         }
 
-        for (GameObject gameObject : objectList) {
+        for (GameObject gameObject : objectsToRemove) {
             gameSession.removeGameObject(gameObject);
         }
     }

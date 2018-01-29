@@ -2,6 +2,7 @@ package gs.storage;
 
 import gs.message.Message;
 import gs.message.Topic;
+import gs.model.Bomb;
 import gs.model.GameObject;
 import gs.model.GameSession;
 import gs.model.Player;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import static gs.message.Topic.GAME_OVER;
 import static gs.message.Topic.REPLICA;
@@ -103,12 +105,14 @@ public class SessionStorage {
                 GameSession gameSession = e.getKey();
                 gameSession.removeGameObject(getPlayerBySocket(session));
                 connections.remove(session);
+                if(!gameSession.isReady()){
+                    SessionStorage.broadcast(gameSession, REPLICA, gameSession.getPlayers());
+                }
                 if (connections.size() == 1 || connections.isEmpty()) {
                     SessionStorage.send(connections.get(0), GAME_OVER, "YOU WIN!");
                     removeGameSession(gameSession);
                     return;
                 }
-                //SessionStorage.broadcast(gameSession, REPLICA, gameSession.getGameObjects());
             }
         }
         playersToWebsocket.remove(getPlayerBySocket(session));
