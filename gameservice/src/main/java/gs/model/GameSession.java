@@ -1,10 +1,10 @@
 package gs.model;
 
 import gs.geometry.Point;
-import gs.map.FromFileMapGenerator;
+import gs.map.GGJ2018MapGenerator;
+import gs.map.MapGenerator;
 import gs.message.Message;
 import gs.message.Topic;
-import gs.map.MapGenerator;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class GameSession implements Tickable {
     private List<GameObject> gameObjects = new ArrayList<>();
     //ID for game objects
     private int lastId = -1;
-    private MapGenerator mapGenerator = new FromFileMapGenerator();
+    private MapGenerator mapGenerator = new GGJ2018MapGenerator();
 
     public GameSession(int playerCount, long id) {
         this.playerCount = playerCount;
@@ -186,7 +186,7 @@ public class GameSession implements Tickable {
 
     public List<GameObject> getAllBombs() {
         List<GameObject> list = new ArrayList<>();
-        for(Bomb bomb : this.bombs) {
+        for (Bomb bomb : this.bombs) {
             list.add((GameObject) bomb);
         }
         return list;

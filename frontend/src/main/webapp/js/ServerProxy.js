@@ -1,6 +1,6 @@
 ServerProxy = Class.extend({
-    gameServerUrl: "localhost:8090",
-    matchMakerUrl: "http://localhost:8080",
+    gameServerUrl: "wtfis.ru:8090",
+    matchMakerUrl: "http://wtfis.ru:8080",
     gameId: "1234",
 
     socket: null,

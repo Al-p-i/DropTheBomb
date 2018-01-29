@@ -8,10 +8,13 @@ dependencies {
     testCompile rootProject.libraries.junit
 }
 
+apply plugin: 'org.springframework.boot'
+
 jar {
-    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    manifest { attributes 'Main-Class': 'mm.MatchmakerServer' }
+    baseName = 'mm'
+    version =  '1.0.0'
 }
+
 
 sourceSets {
     main {

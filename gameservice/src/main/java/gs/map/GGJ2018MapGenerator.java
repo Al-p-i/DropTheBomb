@@ -19,9 +19,9 @@ import java.util.jar.JarFile;
 /**
  * Created by a.pomosov on 27/01/2018.
  */
-public class FromFileMapGenerator implements MapGenerator {
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(FromFileMapGenerator.class);
-    private static String MAP_DIR = "/maps/";
+public class GGJ2018MapGenerator implements MapGenerator {
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(GGJ2018MapGenerator.class);
+    private static String MAP_DIR = "maps/";
 
     @Override
     public void generateMap(GameSession gameSession) {
