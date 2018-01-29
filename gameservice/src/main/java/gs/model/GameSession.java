@@ -42,7 +42,7 @@ public class GameSession implements Tickable {
         return new ArrayList<>(gameObjects);
     }
 
-    public void addPlayer(int id) {
+    public Player addPlayer(int id) {
         Point position;
         switch (id) {
             case 1:
@@ -60,11 +60,16 @@ public class GameSession implements Tickable {
             default:
                 position = new Point(1, 1);
         }
-        addGameObject(new Player(this, position));
+        Player player = new Player(this, position);
+        addGameObject(player);
         connectedPlayers++;
+        return player;
     }
 
     public boolean removeGameObject(GameObject object) {
+/*        if (object instanceof Player) {
+            connectedPlayers--;
+        }*/
         return gameObjects.remove(object);
     }
 

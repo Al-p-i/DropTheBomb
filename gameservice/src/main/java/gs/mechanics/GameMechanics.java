@@ -54,7 +54,7 @@ public class GameMechanics {
 
     private void sendReplica() {
         for (WebSocketSession session : SessionStorage.getWebsocketsByGameSession(gameSession)) {
-            gameSession.getAllBombs().forEach(e -> changedObjects.add(e));
+            changedObjects.addAll(gameSession.getAllBombs());
             SessionStorage.send(session, Topic.REPLICA, changedObjects);
             SessionStorage.getPlayerBySocket(session).setDirection(Movable.Direction.IDLE);
         }

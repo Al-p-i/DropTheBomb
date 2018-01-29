@@ -3,6 +3,7 @@ package gs.network;
 import gs.message.Message;
 import gs.message.Topic;
 import gs.model.GameSession;
+import gs.model.Player;
 import gs.storage.SessionStorage;
 import gs.ticker.Action;
 import gs.ticker.Ticker;
@@ -16,6 +17,9 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @Component
 public class ConnectionHandler extends TextWebSocketHandler implements WebSocketHandler {
@@ -39,10 +43,16 @@ public class ConnectionHandler extends TextWebSocketHandler implements WebSocket
             SessionStorage.addByGameId(gameId, session);
             int data = SessionStorage.getId(gameId);
             SessionStorage.send(session, Topic.POSSESS, data);
-            gameSession.addPlayer(data);
+            Player player = gameSession.addPlayer(data);
             SessionStorage.putGirlToSocket(session, gameSession.getById(gameSession.getLastId()));
-            SessionStorage.broadcast(gameSession, Topic.REPLICA,
-                    SessionStorage.getSessionById(gameId).getGameObjects());
+            SessionStorage.send(session, Topic.REPLICA, gameSession.getGameObjects());
+            for (Player p : gameSession.getPlayers()) {
+                if(!player.equals(p)){
+                    WebSocketSession otherSession = SessionStorage.getWebsocketByPlayer(p);
+                    SessionStorage.send(otherSession, Topic.REPLICA, Collections.singletonList(player));
+                }
+            }
+
             if (gameSession.getPlayerCount()
                     == SessionStorage.getWebsocketsByGameSession(gameSession).size()) {
                 Ticker ticker = new Ticker(gameSession);

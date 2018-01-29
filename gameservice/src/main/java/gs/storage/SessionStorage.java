@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static gs.message.Topic.GAME_OVER;
+import static gs.message.Topic.REPLICA;
 
 public class SessionStorage {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(SessionStorage.class);
@@ -96,20 +97,18 @@ public class SessionStorage {
     }
 
     public static void removeWebsocket(WebSocketSession session) {
-        for (Map.Entry e : connections.entrySet()) {
-            ArrayList<WebSocketSession> tmp = (ArrayList<WebSocketSession>) e.getValue();
-            if (tmp.contains(session)) {
-                GameSession gameSession = (GameSession) e.getKey();
+        for (Map.Entry<GameSession, ArrayList<WebSocketSession>> e : connections.entrySet()) {
+            ArrayList<WebSocketSession> connections = e.getValue();
+            if (connections.contains(session)) {
+                GameSession gameSession = e.getKey();
                 gameSession.removeGameObject(getPlayerBySocket(session));
-                tmp.remove(session);
-                if (tmp.size() == 1) {
-                    SessionStorage.send(tmp.get(0), GAME_OVER, "YOU WIN!");
+                connections.remove(session);
+                if (connections.size() == 1 || connections.isEmpty()) {
+                    SessionStorage.send(connections.get(0), GAME_OVER, "YOU WIN!");
                     removeGameSession(gameSession);
+                    return;
                 }
-                if (tmp.isEmpty()) {
-                    SessionStorage.send(tmp.get(0), GAME_OVER, "YOU WIN!");
-                    removeGameSession(gameSession);
-                }
+                //SessionStorage.broadcast(gameSession, REPLICA, gameSession.getGameObjects());
             }
         }
         playersToWebsocket.remove(getPlayerBySocket(session));
