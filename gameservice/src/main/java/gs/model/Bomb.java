@@ -3,6 +3,9 @@ package gs.model;
 import gs.geometry.Point;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Bomb extends GameObject implements Tickable {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(Bomb.class);
     public static final int DEFAULT_CARRIED_BOMB_LIFETIME = 10000;
@@ -21,6 +24,21 @@ public class Bomb extends GameObject implements Tickable {
         session.addBomb(this);
     }
 
+    public List<Point> getBlast() {
+        int range = owner.getBombRange();
+        int i = 1;
+        List<Point> blasts = new ArrayList<>();
+        blasts.add(position);
+        while(i <= range) {
+            blasts.add(new Point(position.getX() + GameObject.getHeightBox() * i, position.getY()));
+            blasts.add(new Point(position.getX() - GameObject.getHeightBox() * i, position.getY()));
+            blasts.add(new Point(position.getX(), position.getY() + GameObject.getHeightBox() * i));
+            blasts.add(new Point(position.getX(), position.getY() - GameObject.getHeightBox() * i));
+            i++;
+        }
+        return blasts;
+    }
+
     public Player getOwner() {
         return this.owner;
     }
@@ -32,14 +50,6 @@ public class Bomb extends GameObject implements Tickable {
 
     public boolean dead() {
         return this.elapsed >= lifetime;
-    }
-
-    public int getLifetime() {
-        return lifetime;
-    }
-
-    public void setLifetime(int lifetime) {
-        this.lifetime = lifetime;
     }
 
     public void reset(){

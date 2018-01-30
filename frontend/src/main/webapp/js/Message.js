@@ -65,7 +65,7 @@ Messages = Class.extend({
             player.bmp.y = position.y;
             player.direction = direction;
         } else {
-            console.log(new Date().getTime() + " handel new player " + obj.id);
+            //console.log(new Date().getTime() + " handel new player " + obj.id);
             player = new Player(obj.id, position);
             gGameEngine.players.push(player);
         }

@@ -32,6 +32,37 @@ public class Bar implements Collider {
         this.rightPoint = new Point(point.getX() + GameObject.getWidthBox(), point.getY() + GameObject.getHeightBox());
     }
 
+    public List<Bar> getCollidingBars() {
+        List<Bar> bars = new ArrayList<>();
+        if(this.leftPoint.isNode()) {
+            bars.add(this);
+            return bars;
+        }
+        if(this.leftPoint.getX() % 32 == 0 ) {
+            bars.add(new Bar(new Point(this.getLeftPoint().getX(), this.getLeftPoint().getY() / 32 * 32)));
+            bars.add(new Bar(new Point(this.getLeftPoint().getX(), this.getLeftPoint().getY() / 32 * 32 + 32)));
+            return bars;
+        }
+        if(this.leftPoint.getY() % 32 == 0) {
+            bars.add(new Bar(new Point(this.getLeftPoint().getX() / 32 * 32, this.getLeftPoint().getY())));
+            bars.add(new Bar(new Point(this.getLeftPoint().getX() / 32 * 32 + 32, this.getLeftPoint().getY())));
+            return bars;
+        }
+        for(Point point : this.getAllPoints()) {
+            bars.add(point.getBar());
+        }
+        return bars;
+    }
+
+    private List<Point> getAllPoints() {
+        List<Point> points = new ArrayList<>();
+        points.add(leftPoint);
+        points.add(rightPoint);
+        points.add(new Point(leftPoint.getX(), leftPoint.getY() + 32));
+        points.add(new Point(leftPoint.getX() + 32 , leftPoint.getY()));
+        return points;
+    }
+
     public static ArrayList<ArrayList<Bar>> getExplosions(ArrayList<ArrayList<Point>> points) {
         ArrayList<ArrayList<Bar>> allExplosions = new ArrayList<>();
         for (int i = 0; i < points.size(); i++) {
@@ -44,24 +75,6 @@ public class Bar implements Collider {
         }
 
         return allExplosions;
-    }
-
-    public List<Bar> getCollidingBars() {
-        List<Bar> bars = new ArrayList<>();
-        for(Point point : this.getPoints()) {
-            bars.add(point.getBar());
-            System.out.println(point.getBar().toString());
-        }
-        return bars;
-    }
-
-    private List<Point> getPoints() {
-        List<Point> points = new ArrayList<>();
-        points.add(this.leftPoint);
-        points.add(this.rightPoint);
-        points.add(new Point(this.leftPoint.getX(), this.leftPoint.getY() - 32));
-        points.add(new Point(this.leftPoint.getX() + 32, this.leftPoint.getY()));
-        return points;
     }
 
     @Override
@@ -96,17 +109,5 @@ public class Bar implements Collider {
 
     public Point getLeftPoint() {
         return leftPoint;
-    }
-
-    public Point getRightPoint() {
-        return rightPoint;
-    }
-
-    public Point getUpLeftPoint() {
-        return new Point(leftPoint.getX(), leftPoint.getY() + 31);
-    }
-
-    public Point getBotRightPoint() {
-        return new Point(rightPoint.getX(), rightPoint.getY() - 31);
     }
 }

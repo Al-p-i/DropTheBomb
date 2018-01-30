@@ -83,10 +83,6 @@ public class GameSession implements Tickable {
         return null; //TODO: Exception??
     }
 
-    public Message initReplica() {
-        return new Message(Topic.REPLICA, gameObjects.toString());
-    }
-
     public void addGameObject(GameObject gameObject) {
         gameObjects.add(gameObject);
     }
@@ -158,16 +154,6 @@ public class GameSession implements Tickable {
         return bonuses;
     }
 
-    public ArrayList<GameObject> getObjectsWithoutWalls() {
-        ArrayList<GameObject> objects = new ArrayList<>();
-        for (GameObject object : gameObjects) {
-            if (object instanceof Wall)
-                continue;
-            objects.add(object);
-        }
-        return objects;
-    }
-
     @Override
     public void tick(int elapsed) {
         logger.info("tick");
@@ -193,7 +179,7 @@ public class GameSession implements Tickable {
     public List<GameObject> getAllBombs() {
         List<GameObject> list = new ArrayList<>();
         for (Bomb bomb : this.bombs) {
-            list.add((GameObject) bomb);
+            list.add(bomb);
         }
         return list;
     }

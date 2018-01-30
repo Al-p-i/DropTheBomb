@@ -18,7 +18,6 @@ public class Player extends GameObject implements Movable, Tickable {
     private int jumpTimer = 0;
     public static final int BOMB_IMMUNITY = 2000;
     public static final int JUMP_TIMEOUT = 2000;
-    public static final double BOMB_CARRIER_SPEEDUP_ABS = 0.2;
     private transient Point previousPosition;
 
     public Player(GameSession session, Point position) {
@@ -26,13 +25,6 @@ public class Player extends GameObject implements Movable, Tickable {
                         position.getY() * GameObject.getWidthBox()),
                 "Pawn", PLAYER_WIDTH, PLAYER_HEIGHT);
         this.previousPosition = new Point(position.getX(), position.getY());
-    }
-
-
-    public void plantBomb() {
-        Point bitmapPosition = this.position.convertToBitmapPosition();
-        new Bomb(this.session, bitmapPosition, this, Bomb.DEFAULT_PLANTED_BOMB_LIFETIME);
-        this.bombCapacity--;
     }
 
     @Override
@@ -140,10 +132,6 @@ public class Player extends GameObject implements Movable, Tickable {
         } else {
             jumpTimer -= elapsed;
         }
-    }
-
-    public Direction getDirection() {
-        return this.direction;
     }
 
     public void setDirection(Direction direction) {

@@ -1,7 +1,6 @@
 ServerProxy = Class.extend({
     gameServerUrl: "wtfis.ru:8090",
     matchMakerUrl: "http://wtfis.ru:8080",
-    gameId: "1234",
 
     socket: null,
 
@@ -18,10 +17,8 @@ ServerProxy = Class.extend({
         var name = "name=" + Math.floor((1 + Math.random()) * 0x10000)
             .toString(16)
             .substring(1);
-        console.log(name);
         if(!name) {
             alert("Please input login");
-            console.log("Empty login, retry login");
         }
         var settings = {
             "method": "POST",
@@ -31,12 +28,10 @@ ServerProxy = Class.extend({
         }
         $.ajax(settings).done(function(data){
             this.gameId=data;
-            console.log("Matchmaker returned gameId=" + data);
+            //console.log("Matchmaker returned gameId=" + data);
             that.connectToGameServer(this.gameId);
         }).fail(function(){
-            alert("Matchmaker request failed, use default gameId=" + this.gameId);
-            console.log("Matchmaker request failed, use default gameId=" + this.gameId);
-            that.connectToGameServer(this.gameId);
+            alert("Matchmaker request failed");
         });
     },
 
@@ -77,7 +72,7 @@ ServerProxy = Class.extend({
         self.subscribeEvents();
 
         self.socket.onopen = function () {
-            console.log("Connection established.");
+            //console.log("Connection established.");
         };
 
         self.socket.onclose = function (event) {
