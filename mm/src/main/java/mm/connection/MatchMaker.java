@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class MatchMaker extends Thread {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MatchMaker.class);
-    private static final int PLAYERS_IN_GAME = 4;
+    private static final int PLAYERS_IN_GAME = 2;
     private long gameId = -1;
     @Autowired
     NextGameQueue nextGameQueue;
