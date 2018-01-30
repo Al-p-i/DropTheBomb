@@ -38,19 +38,15 @@ ServerProxy = Class.extend({
     subscribeEvents: function() {
         var self = this;
         gInputEngine.subscribe('up', function () {
-            console.log(gMessages.move('up'));
             self.socket.send(gMessages.move('up'))
         });
         gInputEngine.subscribe('down', function () {
-            console.log(gMessages.move('down'));
             self.socket.send(gMessages.move('down'))
         });
         gInputEngine.subscribe('left', function () {
-            console.log(gMessages.move('left'));
             self.socket.send(gMessages.move('left'))
         });
         gInputEngine.subscribe('right', function () {
-            console.log(gMessages.move('right'));
             self.socket.send(gMessages.move('right'))
         });
         gInputEngine.subscribe('bomb', function () {

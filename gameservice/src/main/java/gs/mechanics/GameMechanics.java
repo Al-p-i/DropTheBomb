@@ -11,10 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
@@ -29,7 +26,7 @@ public class GameMechanics {
     private final Queue<Action> inputQueue = new LinkedBlockingQueue<Action>();
     private final GameSession gameSession;
     private ArrayList<Player> movedPlayers = new ArrayList<>(4);
-    private ArrayList<GameObject> changedObjects = new ArrayList<>();
+    private Set<GameObject> changedObjects = new HashSet<>();
     private ArrayList<Player> deadPlayers = new ArrayList<>();
 
     public GameMechanics(GameSession gameSession) {
@@ -269,17 +266,5 @@ public class GameMechanics {
         for (GameObject gameObject : objectsToRemove) {
             gameSession.removeGameObject(gameObject);
         }
-    }
-
-    private boolean isBonus() {
-        double random = Math.random();
-        return (random < 0.3);
-    }
-
-    private Bonus.BonusType bonusType() {
-        double random = Math.random();
-        if (random < 0.4) return Bonus.BonusType.SPEED;
-        else if (random < 0.8) return Bonus.BonusType.BOMBS;
-        return Bonus.BonusType.RANGE;
     }
 }

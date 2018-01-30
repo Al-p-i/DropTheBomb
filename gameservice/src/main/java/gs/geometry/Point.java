@@ -17,14 +17,9 @@ public class Point implements Collider {
     }
 
     public Bar getOuterBar() {
-        return new Bar(this.getX() + 3, this.getY() + 3, this.getX() + 29, this.getY() + 29);
+        return new Bar(this.getX() + 8, this.getY() + 8, this.getX() + 24, this.getY() + 24);
     }
 
-    public Bar getBar() {
-        int x = this.x - this.x % 32;
-        int y = this.y - this.y % 32;
-        return new Bar(new Point(x, y));
-    }
 
     public int getX() {
         return x;
@@ -35,7 +30,7 @@ public class Point implements Collider {
     }
 
     public boolean isNode() {
-        return (this.x % 32 == 0 && this.y % 32 == 0);
+        return (this.x % 32 == 3 && this.y % 32 == 3);
     }
 
     @Override

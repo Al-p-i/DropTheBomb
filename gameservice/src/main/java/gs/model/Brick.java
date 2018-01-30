@@ -13,4 +13,11 @@ public class Brick extends GameObject {
                         position.getY() * GameObject.getWidthBox()),
                 "Wood", BRICK_WIDTH, BRICK_HEIGHT);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof Brick) {
+            return this.position.equals(((Brick) o).position);
+        } return false;
+    }
 }

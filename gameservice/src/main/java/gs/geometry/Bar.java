@@ -34,47 +34,29 @@ public class Bar implements Collider {
 
     public List<Bar> getCollidingBars() {
         List<Bar> bars = new ArrayList<>();
-        if(this.leftPoint.isNode()) {
-            bars.add(this);
-            return bars;
-        }
-        if(this.leftPoint.getX() % 32 == 0 ) {
-            bars.add(new Bar(new Point(this.getLeftPoint().getX(), this.getLeftPoint().getY() / 32 * 32)));
-            bars.add(new Bar(new Point(this.getLeftPoint().getX(), this.getLeftPoint().getY() / 32 * 32 + 32)));
-            return bars;
-        }
-        if(this.leftPoint.getY() % 32 == 0) {
-            bars.add(new Bar(new Point(this.getLeftPoint().getX() / 32 * 32, this.getLeftPoint().getY())));
-            bars.add(new Bar(new Point(this.getLeftPoint().getX() / 32 * 32 + 32, this.getLeftPoint().getY())));
-            return bars;
-        }
-        for(Point point : this.getAllPoints()) {
-            bars.add(point.getBar());
-        }
-        return bars;
-    }
-
-    private List<Point> getAllPoints() {
-        List<Point> points = new ArrayList<>();
-        points.add(leftPoint);
-        points.add(rightPoint);
-        points.add(new Point(leftPoint.getX(), leftPoint.getY() + 32));
-        points.add(new Point(leftPoint.getX() + 32 , leftPoint.getY()));
-        return points;
-    }
-
-    public static ArrayList<ArrayList<Bar>> getExplosions(ArrayList<ArrayList<Point>> points) {
-        ArrayList<ArrayList<Bar>> allExplosions = new ArrayList<>();
-        for (int i = 0; i < points.size(); i++) {
-            ArrayList<Bar> explosion = new ArrayList<>();
-            for (int j = 0; j < points.get(i).size(); j++) {
-                Bar bar = new Bar(points.get(i).get(j));
-                explosion.add(bar);
+        if(this.rightPoint.getX() / 32 - this.leftPoint.getX() / 32 == 1
+                && this.rightPoint.getX() % 32 != 0) {
+            if(this.rightPoint.getY() / 32 - this.leftPoint.getY() / 32 == 1) {
+                bars.add(new Bar(new Point(this.leftPoint.getX() / 32 * 32, this.leftPoint.getY() / 32 * 32)));
+                bars.add(new Bar(new Point(this.getUpLeftPoint().getX() / 32 * 32, this.getUpLeftPoint().getY() / 32 * 32)));
+                bars.add(new Bar(new Point(this.getBotRightPoint().getX() / 32 * 32, this.getBotRightPoint().getY() / 32 * 32)));
+                bars.add(new Bar(new Point(this.rightPoint.getX() / 32 * 32, this.rightPoint.getY() / 32 * 32)));
+                return bars;
+            } else {
+                bars.add(new Bar(new Point(this.leftPoint.getX() / 32 * 32, this.leftPoint.getY() / 32 * 32)));
+                bars.add(new Bar(new Point(this.getBotRightPoint().getX() / 32 * 32, this.getBotRightPoint().getY() / 32 * 32)));
+                return bars;
             }
-            allExplosions.add(explosion);
+        } else {
+            if(this.rightPoint.getY() / 32 - this.leftPoint.getY() / 32 == 1
+                    && this.rightPoint.getY() % 32 != 0) {
+                bars.add(new Bar(new Point(this.leftPoint.getX() / 32 * 32, this.leftPoint.getY() / 32 * 32)));
+                bars.add(new Bar(new Point(this.getUpLeftPoint().getX() / 32 * 32, this.getUpLeftPoint().getY() / 32 * 32)));
+                return bars;
+            }
         }
-
-        return allExplosions;
+        bars.add(new Bar(new Point(this.getLeftPoint().getX() / 32 * 32, this.getLeftPoint().getY() / 32 * 32)));
+        return bars;
     }
 
     @Override
@@ -109,5 +91,13 @@ public class Bar implements Collider {
 
     public Point getLeftPoint() {
         return leftPoint;
+    }
+
+    private Point getBotRightPoint() {
+        return new Point(this.leftPoint.getX() + 32, this.leftPoint.getY());
+    }
+
+    private Point getUpLeftPoint() {
+        return new Point(this.leftPoint.getX(), this.leftPoint.getY() + 32);
     }
 }
