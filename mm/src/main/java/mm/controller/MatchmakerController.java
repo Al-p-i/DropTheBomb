@@ -35,6 +35,16 @@ public class MatchmakerController {
     }
 
     @RequestMapping(
+            path = "leave",
+            method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<String> leaveQueue() {
+        logger.info("player leaves");
+        matchmakerService.leave();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(
             path = "link",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)

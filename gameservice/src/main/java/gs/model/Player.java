@@ -85,7 +85,7 @@ public class Player extends GameObject implements Movable, Tickable {
     }
 
     public Point moveBack() {
-        log.info("{} move back from {} to {}", this, position, previousPosition);
+        //log.info("{} move back from {} to {}", this, position, previousPosition);
         this.position = new Point(previousPosition.getX(), previousPosition.getY());
         return position;
     }

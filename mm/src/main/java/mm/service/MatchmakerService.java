@@ -2,7 +2,8 @@ package mm.service;
 
 import mm.connection.ConnectionQueue;
 import mm.connection.Joins;
-import mm.network.MatchmakerClient;
+import mm.connection.NextGameQueue;
+import mm.network.GSApiClient;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,9 @@ public class MatchmakerService {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(MatchmakerService.class);
 
     @Autowired
-    MatchmakerClient client;
+    NextGameQueue nextGameQueue;
+    @Autowired
+    GSApiClient client;
 
     public long join(@NotNull String name) {
         if (Joins.getInstance().containsKey(name)) {
@@ -35,5 +38,9 @@ public class MatchmakerService {
         String link = client.createPost(playerCount);
         System.out.println(link);
         return link;
+    }
+
+    public void leave() {
+        nextGameQueue.removeFromQueue();
     }
 }

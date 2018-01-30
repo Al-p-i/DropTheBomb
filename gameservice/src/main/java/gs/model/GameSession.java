@@ -20,6 +20,7 @@ public class GameSession implements Tickable {
     //ID for game objects
     private int lastId = -1;
     private MapGenerator mapGenerator = new GGJ2018MapGenerator();
+    private boolean started = false;
 
     public GameSession(int playerCount, long id) {
         this.playerCount = playerCount;
@@ -195,5 +196,13 @@ public class GameSession implements Tickable {
             list.add((GameObject) bomb);
         }
         return list;
+    }
+
+    public void start() {
+        this.started = true;
+    }
+
+    public boolean isStarted() {
+        return started;
     }
 }

@@ -39,36 +39,45 @@ public class ConnectionHandler extends TextWebSocketHandler implements WebSocket
             session.close();
             return;
         }
-        if (!gameSession.isReady()) {
-            SessionStorage.addByGameId(gameId, session);
-            int data = SessionStorage.getId(gameId);
-            SessionStorage.send(session, Topic.POSSESS, data);
-            Player player = gameSession.addPlayer(data);
-            SessionStorage.putGirlToSocket(session, gameSession.getById(gameSession.getLastId()));
-            SessionStorage.send(session, Topic.REPLICA, gameSession.getGameObjects());
-            for (Player p : gameSession.getPlayers()) {
-                if(!player.equals(p)){
-                    WebSocketSession otherSession = SessionStorage.getWebsocketByPlayer(p);
-                    SessionStorage.send(otherSession, Topic.REPLICA, gameSession.getPlayers());
-                }
-            }
+        if (!gameSession.isStarted() && !gameSession.isReady()) {
+            connectSessionToGameSession(session, gameId, gameSession);
 
             if (gameSession.getPlayerCount()
                     == SessionStorage.getWebsocketsByGameSession(gameSession).size()) {
-                Ticker ticker = new Ticker(gameSession);
-                SessionStorage.putTicker(ticker, gameSession);
-                ticker.setName("gameId : " + gameId);
-                ticker.begin();
-                ticker.start();
+                startGameSession(gameId, gameSession);
             }
         } else {
             session.close();
         }
     }
 
+    private void connectSessionToGameSession(WebSocketSession session, long gameId, GameSession gameSession) {
+        SessionStorage.addByGameId(gameId, session);
+        int data = SessionStorage.getId(gameId);
+        SessionStorage.send(session, Topic.POSSESS, data);
+        Player player = gameSession.addPlayer(data);
+        SessionStorage.putGirlToSocket(session, gameSession.getById(gameSession.getLastId()));
+        SessionStorage.send(session, Topic.REPLICA, gameSession.getGameObjects());
+        for (Player p : gameSession.getPlayers()) {
+            if(!player.equals(p)){
+                WebSocketSession otherSession = SessionStorage.getWebsocketByPlayer(p);
+                SessionStorage.send(otherSession, Topic.REPLICA, gameSession.getPlayers());
+            }
+        }
+    }
+
+    private void startGameSession(long gameId, GameSession gameSession) {
+        gameSession.start();
+        Ticker ticker = new Ticker(gameSession);
+        SessionStorage.putTicker(ticker, gameSession);
+        ticker.setName("gameId : " + gameId);
+        ticker.begin();
+        ticker.start();
+    }
+
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        if (SessionStorage.getByWebsocket(session).isReady()) {
+        if (SessionStorage.getByWebsocket(session).isStarted()) {
             Message msg = JsonHelper.fromJson(message.getPayload(), Message.class);
             Action action = new Action(msg.getTopic(),
                     SessionStorage.getPlayerBySocket(session), msg.getData());

@@ -6,6 +6,7 @@ import gs.model.Bomb;
 import gs.model.GameObject;
 import gs.model.GameSession;
 import gs.model.Player;
+import gs.network.MMApiClient;
 import gs.ticker.Action;
 import gs.ticker.Ticker;
 import gs.util.JsonHelper;
@@ -33,6 +34,7 @@ public class SessionStorage {
             = new ConcurrentHashMap<>();
     private static ConcurrentHashMap<GameSession, Ticker> tickers = new ConcurrentHashMap<>();
     private static volatile long lastId = -1;
+    private static MMApiClient mmApiClient = new MMApiClient();
 
     public static GameSession getByWebsocket(WebSocketSession session) {
         for (Map.Entry<GameSession, ArrayList<WebSocketSession>> i : connections.entrySet()) {
@@ -105,10 +107,11 @@ public class SessionStorage {
                 GameSession gameSession = e.getKey();
                 gameSession.removeGameObject(getPlayerBySocket(session));
                 connections.remove(session);
-                if(!gameSession.isReady()){
+                if (!gameSession.isStarted() && !gameSession.isReady()) {
                     SessionStorage.broadcast(gameSession, REPLICA, gameSession.getPlayers());
+                    mmApiClient.playerLeave();
                 }
-                if (connections.size() == 1 || connections.isEmpty()) {
+                if (gameSession.isStarted() && connections.size() == 1 || connections.isEmpty()) {
                     SessionStorage.send(connections.get(0), GAME_OVER, "YOU WIN!");
                     removeGameSession(gameSession);
                     return;

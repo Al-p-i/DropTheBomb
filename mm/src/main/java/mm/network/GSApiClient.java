@@ -10,13 +10,13 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
-public class MatchmakerClient {
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MatchmakerClient.class);
+public class GSApiClient {
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GSApiClient.class);
     private static final String URI = "http://localhost:8090/game";
     private RestTemplate rest;
     private HttpHeaders headers;
 
-    public MatchmakerClient() {
+    public GSApiClient() {
         this.rest = new RestTemplate();
         this.headers = new HttpHeaders();
         headers.add("Content-Type", "application/x-www-form-urlencoded");
